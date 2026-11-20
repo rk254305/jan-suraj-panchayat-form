@@ -2,26 +2,19 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   initFormElements();
+  setupDobAgeCalculator();
+  setupContactFields();
+  setupBiodataUpload();
   setupConditionalLogic();
   setupRadioStyling();
   setupDistrictBlockCascade();
   setupSettingsModal();
+  setupQrCreativeModal();
   setupFormSubmission();
 });
 
 // 1. Initialize Dynamic Select Elements
 function initFormElements() {
-  // Populate Age (21 to 75 years)
-  const ageSelect = document.getElementById('age');
-  if (ageSelect) {
-    for (let i = 21; i <= 75; i++) {
-      const opt = document.createElement('option');
-      opt.value = `${i} वर्ष`;
-      opt.textContent = `${i} वर्ष`;
-      ageSelect.appendChild(opt);
-    }
-  }
-
   // Populate ZP Kshetra (1 to 75)
   const zpSelect = document.getElementById('zpKshetra');
   if (zpSelect) {
@@ -46,7 +39,186 @@ function initFormElements() {
   }
 }
 
-// 2. Radio Button Visual Selection
+// 2. Automated Age Calculator from Date of Birth (DOB)
+function setupDobAgeCalculator() {
+  const dobInput = document.getElementById('dob');
+  const ageBox = document.getElementById('ageCalculationBox');
+  const ageText = document.getElementById('calculatedAgeText');
+  const notice = document.getElementById('eligibilityNotice');
+  const hiddenAge = document.getElementById('calculatedAge');
+
+  if (!dobInput) return;
+
+  // Set maximum date as today (cannot be born in future)
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  dobInput.max = `${yyyy}-${mm}-${dd}`;
+
+  dobInput.addEventListener('change', calculateAndDisplayAge);
+  dobInput.addEventListener('input', calculateAndDisplayAge);
+
+  function calculateAndDisplayAge() {
+    const val = dobInput.value;
+    if (!val) {
+      if (ageBox) ageBox.style.display = 'none';
+      if (hiddenAge) hiddenAge.value = '';
+      return;
+    }
+
+    const birthDate = new Date(val);
+    if (isNaN(birthDate.getTime())) {
+      if (ageBox) ageBox.style.display = 'none';
+      if (hiddenAge) hiddenAge.value = '';
+      return;
+    }
+
+    const today = new Date();
+    let years = today.getFullYear() - birthDate.getFullYear();
+    let months = today.getMonth() - birthDate.getMonth();
+    let days = today.getDate() - birthDate.getDate();
+
+    if (days < 0) {
+      months--;
+    }
+    if (months < 0) {
+      years--;
+      months += 12;
+    }
+
+    if (years < 0) {
+      if (ageBox) ageBox.style.display = 'none';
+      if (hiddenAge) hiddenAge.value = '';
+      return;
+    }
+
+    const ageFormatted = `${years} वर्ष ${months} माह`;
+    if (hiddenAge) hiddenAge.value = ageFormatted;
+    if (ageText) ageText.textContent = ageFormatted;
+
+    if (ageBox) {
+      ageBox.style.display = 'block';
+      if (years >= 21) {
+        ageBox.className = 'age-calc-box success';
+        if (notice) {
+          notice.innerHTML = '✅ <span style="color:#065f46; font-weight:600;">न्यूनतम 21 वर्ष की आयु योग्यता पूर्ण (चुनाव लड़ने हेतु पात्र)</span>';
+        }
+      } else {
+        ageBox.className = 'age-calc-box warning';
+        if (notice) {
+          notice.innerHTML = `⚠️ <span style="color:#92400e; font-weight:600;">सूचना: पंचायती राज चुनाव नियमानुसार न्यूनतम उम्र 21 वर्ष अनिवार्य है (वर्तमान में ${years} वर्ष ${months} माह)।</span>`;
+        }
+      }
+    }
+
+    // Clear error
+    document.getElementById('card_dob')?.classList.remove('has-error');
+  }
+}
+
+// 3. Contact Fields Handler (WhatsApp & "Same as Mobile")
+function setupContactFields() {
+  const mobileInput = document.getElementById('mobile');
+  const waInput = document.getElementById('whatsapp');
+  const sameCheckbox = document.getElementById('sameAsMobile');
+
+  if (!mobileInput || !waInput || !sameCheckbox) return;
+
+  sameCheckbox.addEventListener('change', () => {
+    if (sameCheckbox.checked) {
+      waInput.value = mobileInput.value.trim();
+    }
+  });
+
+  mobileInput.addEventListener('input', () => {
+    if (sameCheckbox.checked) {
+      waInput.value = mobileInput.value.trim();
+    }
+  });
+}
+
+// 4. Optional Biodata / Resume File Upload Handler
+let uploadedBiodata = null; // { fileName, fileSize, fileType, dataUrl }
+
+function setupBiodataUpload() {
+  const fileInput = document.getElementById('biodataFile');
+  const prompt = document.getElementById('uploadPrompt');
+  const preview = document.getElementById('fileInfoPreview');
+  const nameDisplay = document.getElementById('fileNameDisplay');
+  const sizeDisplay = document.getElementById('fileSizeDisplay');
+  const btnRemove = document.getElementById('btnRemoveFile');
+  const dropZone = document.getElementById('fileDropZone');
+
+  if (!fileInput) return;
+
+  fileInput.addEventListener('change', (e) => {
+    handleFiles(e.target.files);
+  });
+
+  // Drag & drop support
+  ['dragenter', 'dragover'].forEach(evt => {
+    dropZone?.addEventListener(evt, (e) => {
+      e.preventDefault();
+      dropZone.classList.add('drag-over');
+    });
+  });
+
+  ['dragleave', 'drop'].forEach(evt => {
+    dropZone?.addEventListener(evt, (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+    });
+  });
+
+  dropZone?.addEventListener('drop', (e) => {
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
+      handleFiles(e.dataTransfer.files);
+    }
+  });
+
+  btnRemove?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    clearBiodata();
+  });
+
+  function handleFiles(files) {
+    if (!files || !files[0]) return;
+    const file = files[0];
+
+    // Max 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      alert('फाइल का आकार 5 MB से अधिक है। कृपया 5 MB से छोटी फाइल चुनें।');
+      fileInput.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      uploadedBiodata = {
+        fileName: file.name,
+        fileSize: (file.size / 1024).toFixed(1) + ' KB',
+        fileType: file.type,
+        dataUrl: event.target.result
+      };
+
+      if (nameDisplay) nameDisplay.textContent = file.name;
+      if (sizeDisplay) sizeDisplay.textContent = uploadedBiodata.fileSize;
+      if (prompt) prompt.style.display = 'none';
+      if (preview) preview.style.display = 'flex';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function clearBiodata() {
+    uploadedBiodata = null;
+    fileInput.value = '';
+    if (prompt) prompt.style.display = 'block';
+    if (preview) preview.style.display = 'none';
+  }
+}
+
+// 5. Radio Button Visual Selection
 function setupRadioStyling() {
   document.querySelectorAll('input[type="radio"]').forEach(radio => {
     radio.addEventListener('change', () => {
@@ -68,9 +240,9 @@ function setupRadioStyling() {
   });
 }
 
-// 3. Conditional Visibility Logic
+// 6. Conditional Visibility Logic
 function setupConditionalLogic() {
-  // Post applied conditional: ZP Kshetra
+  // Post applied conditional: ZP Kshetra (Optional - NO required check)
   const postRadios = document.querySelectorAll('input[name="postApplied"]');
   const cardZpKshetra = document.getElementById('card_zpKshetra');
   const zpSelect = document.getElementById('zpKshetra');
@@ -79,12 +251,11 @@ function setupConditionalLogic() {
     radio.addEventListener('change', () => {
       if (radio.checked && radio.value === 'जिला परिषद सदस्य') {
         cardZpKshetra.classList.add('active');
-        zpSelect.setAttribute('required', 'required');
+        // Note: No required attribute added (as requested: optional for ZP candidate)
       } else if (radio.checked) {
         cardZpKshetra.classList.remove('active');
         cardZpKshetra.classList.remove('has-error');
-        zpSelect.removeAttribute('required');
-        zpSelect.value = '';
+        if (zpSelect) zpSelect.value = '';
       }
     });
   });
@@ -107,22 +278,9 @@ function setupConditionalLogic() {
       }
     });
   });
-
-  // Gender conditional: 8th pass note
-  const genderRadios = document.querySelectorAll('input[name="gender"]');
-  const optEighth = document.getElementById('opt_eighth');
-  genderRadios.forEach(radio => {
-    radio.addEventListener('change', () => {
-      if (radio.checked && radio.value === 'महिला') {
-        if (optEighth) optEighth.style.borderColor = '#d97706';
-      } else if (radio.checked) {
-        if (optEighth) optEighth.style.borderColor = '';
-      }
-    });
-  });
 }
 
-// 4. District -> Assembly & Block Cascading Dropdowns
+// 7. District -> Assembly & Block Cascading Dropdowns
 function setupDistrictBlockCascade() {
   const distSelect = document.getElementById('district');
   const assemblySelect = document.getElementById('assembly');
@@ -225,7 +383,7 @@ function setupDistrictBlockCascade() {
   }
 }
 
-// 5. Settings Modal (Google Sheets Connection)
+// 8. Settings Modal (Google Sheets Connection)
 function setupSettingsModal() {
   const btnOpen = document.getElementById('btnOpenSettings');
   const modal = document.getElementById('settingsModal');
@@ -233,11 +391,11 @@ function setupSettingsModal() {
   const btnSave = document.getElementById('btnSaveSettings');
   const inputUrl = document.getElementById('inputWebhookUrl');
 
-  if (!btnOpen || !modal) return;
+  if (!modal) return;
 
-  btnOpen.addEventListener('click', () => {
-    const currentUrl = localStorage.getItem('jan_suraj_sheet_url') || APP_CONFIG.GOOGLE_SHEET_WEBHOOK_URL || '';
-    inputUrl.value = currentUrl;
+  btnOpen?.addEventListener('click', () => {
+    const currentUrl = localStorage.getItem('jan_suraj_sheet_url') || (typeof APP_CONFIG !== 'undefined' ? APP_CONFIG.GOOGLE_SHEET_WEBHOOK_URL : '') || '';
+    if (inputUrl) inputUrl.value = currentUrl;
     modal.style.display = 'flex';
   });
 
@@ -245,10 +403,10 @@ function setupSettingsModal() {
     modal.style.display = 'none';
   };
 
-  btnCancel.addEventListener('click', closeModal);
+  btnCancel?.addEventListener('click', closeModal);
 
-  btnSave.addEventListener('click', () => {
-    const val = inputUrl.value.trim();
+  btnSave?.addEventListener('click', () => {
+    const val = inputUrl ? inputUrl.value.trim() : '';
     if (val) {
       localStorage.setItem('jan_suraj_sheet_url', val);
       alert('Google Sheet Webhook URL सफलतापूर्वक सुरक्षित कर लिया गया है!');
@@ -264,13 +422,92 @@ function setupSettingsModal() {
   });
 }
 
-// 6. Form Submission & Validation
+// 9. Campaign Poster & QR Code Generator Modal
+function setupQrCreativeModal() {
+  const btnOpen = document.getElementById('btnOpenCreative');
+  const bannerPill = document.getElementById('bannerQrPill');
+  const modal = document.getElementById('creativeModal');
+  const btnClose = document.getElementById('btnCloseCreative');
+  const btnPrint = document.getElementById('btnPrintCreative');
+  const btnCopy = document.getElementById('btnCopyFormLink');
+  const btnShareWa = document.getElementById('btnSharePosterWa');
+  const qrContainer = document.getElementById('creativeQrCode');
+  const formUrlDisplay = document.getElementById('creativeFormUrl');
+
+  if (!modal) return;
+
+  // Determine current form public URL
+  const currentUrl = window.location.href.split('#')[0].replace('preview.html', 'index.html');
+  if (formUrlDisplay) formUrlDisplay.textContent = currentUrl;
+
+  let qrRendered = false;
+
+  function renderQrCode() {
+    if (qrRendered || !qrContainer) return;
+    qrContainer.innerHTML = '';
+    if (typeof QRCode !== 'undefined') {
+      new QRCode(qrContainer, {
+        text: currentUrl,
+        width: 190,
+        height: 190,
+        colorDark: '#0d5c3a',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+      qrRendered = true;
+    }
+  }
+
+  const openCreativeModal = () => {
+    renderQrCode();
+    modal.style.display = 'flex';
+  };
+
+  btnOpen?.addEventListener('click', openCreativeModal);
+  bannerPill?.addEventListener('click', openCreativeModal);
+
+  btnClose?.addEventListener('click', () => {
+    modal.style.display = 'none';
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.style.display = 'none';
+  });
+
+  btnPrint?.addEventListener('click', () => {
+    window.print();
+  });
+
+  btnCopy?.addEventListener('click', () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(currentUrl).then(() => {
+        alert('आवेदन फॉर्म लिंक कॉपी कर लिया गया है:\n' + currentUrl);
+      });
+    } else {
+      prompt('आवेदन फॉर्म लिंक कॉपी करें:', currentUrl);
+    }
+  });
+
+  if (btnShareWa) {
+    const waPosterMsg = encodeURIComponent(
+      `*जन सुराज | मिशन पंचायती राज चुनाव - 2027*\n\n` +
+      `बिहार में बदलाव की राजनीति में सही और कर्मठ लोगों की भागीदारी!\n\n` +
+      `मुखिया, सरपंच, वार्ड, पंचायत समिति, जिला परिषद, प्रखंड प्रमुख व चेयरमैन पद हेतु अपनी उम्मीदवारी का आवेदन इस लिंक पर दर्ज करें:\n\n` +
+      `👉 ${currentUrl}\n\n` +
+      `सही लोग • सही सोच • सामूहिक प्रयास\nजय बिहार, जय जन सुराज!`
+    );
+    btnShareWa.href = `https://api.whatsapp.com/send?text=${waPosterMsg}`;
+  }
+}
+
+// 10. Form Submission & Validation
 function setupFormSubmission() {
   const form = document.getElementById('panchayatForm');
   const btnSubmit = document.getElementById('btnSubmit');
   const spinner = document.getElementById('submitSpinner');
   const successModal = document.getElementById('successModal');
   const btnCloseModal = document.getElementById('btnCloseModal');
+  const btnPrintReceipt = document.getElementById('btnPrintReceipt');
 
   // Input clear error listeners
   form.querySelectorAll('input, select, textarea').forEach(el => {
@@ -304,9 +541,16 @@ function setupFormSubmission() {
     const mobile = document.getElementById('mobile').value.trim();
     if (!mobile || !/^[6-9]\d{9}$/.test(mobile)) flagError('card_mobile');
 
-    // 3. Age
-    const age = document.getElementById('age').value;
-    if (!age) flagError('card_age');
+    // Contact Details: WhatsApp & Facebook (Optional)
+    const whatsapp = document.getElementById('whatsapp')?.value.trim() || '';
+    const fbLink = document.getElementById('fbLink')?.value.trim() || '';
+
+    // 3. Date of Birth (DOB) & Age
+    const dob = document.getElementById('dob').value;
+    const calculatedAge = document.getElementById('calculatedAge').value || '';
+    if (!dob) {
+      flagError('card_dob');
+    }
 
     // 4. Gender
     const gender = form.querySelector('input[name="gender"]:checked')?.value;
@@ -328,12 +572,8 @@ function setupFormSubmission() {
     const postApplied = form.querySelector('input[name="postApplied"]:checked')?.value;
     if (!postApplied) flagError('card_postApplied');
 
-    // 9. ZP Kshetra (if applicable)
-    let zpKshetra = '';
-    if (postApplied === 'जिला परिषद सदस्य') {
-      zpKshetra = document.getElementById('zpKshetra').value;
-      if (!zpKshetra) flagError('card_zpKshetra');
-    }
+    // 9. ZP Kshetra (Optional - NO required check, NO asterisk)
+    const zpKshetra = document.getElementById('zpKshetra')?.value || '';
 
     // 10. Past Election
     const pastElection = form.querySelector('input[name="pastElection"]:checked')?.value;
@@ -404,7 +644,11 @@ function setupFormSubmission() {
       document.getElementById('card_location')?.classList.remove('has-error');
     }
 
-    // Feedback
+    // 17. Biodata (Optional)
+    const biodataFileName = uploadedBiodata ? uploadedBiodata.fileName : '';
+    const biodataFileSize = uploadedBiodata ? uploadedBiodata.fileSize : '';
+
+    // 18. Feedback (Optional)
     const feedback = document.getElementById('feedback').value.trim();
 
     if (!isValid) {
@@ -424,7 +668,10 @@ function setupFormSubmission() {
       timestamp,
       fullName,
       mobile,
-      age,
+      whatsapp,
+      fbLink,
+      dob,
+      age: calculatedAge,
       gender,
       religion,
       caste,
@@ -442,6 +689,9 @@ function setupFormSubmission() {
       block,
       panchayat,
       ward,
+      biodataFileName,
+      biodataFileSize,
+      biodataFile: uploadedBiodata ? uploadedBiodata.dataUrl : '',
       feedback
     };
 
@@ -452,14 +702,19 @@ function setupFormSubmission() {
     // 1. Store in Local Storage (Always reliable backup)
     try {
       const existing = JSON.parse(localStorage.getItem('jan_suraj_submissions') || '[]');
-      existing.unshift(submissionData);
+      // To prevent storage quota issues if large base64 files are uploaded, store metadata and first 50KB or file name
+      const storeData = { ...submissionData };
+      if (storeData.biodataFile && storeData.biodataFile.length > 500000) {
+        storeData.biodataFile = storeData.biodataFile.substring(0, 500000) + '...[truncated]';
+      }
+      existing.unshift(storeData);
       localStorage.setItem('jan_suraj_submissions', JSON.stringify(existing));
     } catch (e) {
       console.warn('LocalStorage error:', e);
     }
 
     // 2. Transmit to Google Sheet
-    const sheetUrl = localStorage.getItem('jan_suraj_sheet_url') || APP_CONFIG.GOOGLE_SHEET_WEBHOOK_URL;
+    const sheetUrl = localStorage.getItem('jan_suraj_sheet_url') || (typeof APP_CONFIG !== 'undefined' ? APP_CONFIG.GOOGLE_SHEET_WEBHOOK_URL : '');
     let sheetSynced = false;
     if (sheetUrl && sheetUrl.startsWith('http') && !sheetUrl.includes('SAMPLE_DEPLOYMENT_URL')) {
       try {
@@ -492,6 +747,19 @@ function setupFormSubmission() {
     document.getElementById('card_zpKshetra')?.classList.remove('active');
     document.getElementById('card_pastPost')?.classList.remove('active');
     
+    // Reset DOB age box
+    const ageBox = document.getElementById('ageCalculationBox');
+    if (ageBox) ageBox.style.display = 'none';
+    const hiddenAge = document.getElementById('calculatedAge');
+    if (hiddenAge) hiddenAge.value = '';
+
+    // Reset Biodata
+    uploadedBiodata = null;
+    const prompt = document.getElementById('uploadPrompt');
+    const preview = document.getElementById('fileInfoPreview');
+    if (prompt) prompt.style.display = 'block';
+    if (preview) preview.style.display = 'none';
+
     // Reset Assembly & Block selects
     const assemblySelect = document.getElementById('assembly');
     if (assemblySelect) {
@@ -518,8 +786,36 @@ function setupFormSubmission() {
     document.getElementById('modalRefId').textContent = data.refId;
     document.getElementById('sum_name').textContent = data.fullName;
     document.getElementById('sum_mobile').textContent = data.mobile;
+
+    // WhatsApp summary row
+    const rowWa = document.getElementById('row_sum_wa');
+    const sumWa = document.getElementById('sum_whatsapp');
+    if (data.whatsapp) {
+      if (rowWa) rowWa.style.display = 'flex';
+      if (sumWa) sumWa.textContent = data.whatsapp;
+    } else {
+      if (rowWa) rowWa.style.display = 'none';
+    }
+
+    // Age / DOB summary
+    const sumAge = document.getElementById('sum_age');
+    if (sumAge) {
+      sumAge.textContent = data.age ? `${data.age} (जन्म तिथि: ${data.dob})` : (data.dob || '-');
+    }
+
+    // Post applied
     document.getElementById('sum_post').textContent = data.zpKshetra ? `${data.postApplied} (${data.zpKshetra})` : data.postApplied;
     document.getElementById('sum_location').textContent = `${data.district}, प्रखंड: ${data.block}, पं: ${data.panchayat}`;
+
+    // Biodata row
+    const rowBio = document.getElementById('row_sum_bio');
+    const sumBio = document.getElementById('sum_biodata');
+    if (data.biodataFileName) {
+      if (rowBio) rowBio.style.display = 'flex';
+      if (sumBio) sumBio.textContent = `${data.biodataFileName} (${data.biodataFileSize})`;
+    } else {
+      if (rowBio) rowBio.style.display = 'none';
+    }
 
     // Sheet Sync Status indicator
     const syncBadge = document.getElementById('syncStatusBadge');
@@ -541,7 +837,7 @@ function setupFormSubmission() {
     const waText = encodeURIComponent(
       `*जन सुराज पंचायती राज चुनाव - 2027*\n\nमैंने जन सुराज के तहत अपनी उम्मीदवारी का आवेदन सफलतापूर्वक दर्ज कर दिया है!\n\n` +
       `👤 प्रत्याशी: ${data.fullName}\n` +
-      `🗳️ पद: ${data.postApplied}\n` +
+      `🗳️ पद: ${data.postApplied}${data.zpKshetra ? ' (' + data.zpKshetra + ')' : ''}\n` +
       `📍 जिला: ${data.district} | प्रखंड: ${data.block}\n` +
       `🆔 आवेदन Ref ID: ${data.refId}\n\n` +
       `बिहार तब बदलेगा जब वार्ड सदस्य से लेकर मुख्यमंत्री तक अच्छे लोग चुनें जाएँगे!\n` +
@@ -549,39 +845,19 @@ function setupFormSubmission() {
     );
     document.getElementById('btnShareWhatsapp').href = `https://api.whatsapp.com/send?text=${waText}`;
 
-    // Print Receipt
-    document.getElementById('btnPrintReceipt').onclick = () => {
-      window.print();
-    };
-
     successModal.style.display = 'flex';
   }
 
-  btnCloseModal.addEventListener('click', () => {
+  // Print Receipt
+  btnPrintReceipt?.addEventListener('click', () => {
+    window.print();
+  });
+
+  btnCloseModal?.addEventListener('click', () => {
     successModal.style.display = 'none';
   });
 
-  successModal.addEventListener('click', (e) => {
+  successModal?.addEventListener('click', (e) => {
     if (e.target === successModal) successModal.style.display = 'none';
   });
-
-  // Secret Admin Access for Owner (Ctrl+Shift+A or 3 clicks on footer logo)
-  document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
-      e.preventDefault();
-      window.location.href = 'admin.html';
-    }
-  });
-
-  let logoClicks = 0;
-  const footerLogo = document.querySelector('.footer-logo');
-  if (footerLogo) {
-    footerLogo.addEventListener('click', () => {
-      logoClicks++;
-      if (logoClicks >= 3) {
-        window.location.href = 'admin.html';
-      }
-      setTimeout(() => { logoClicks = 0; }, 2000);
-    });
-  }
 }

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>मोबाइल प्रीव्यू - जन सुराज फॉर्म</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #f59e0b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif;
+      background: linear-gradient(135deg, #0b0f19 0%, #1e1b4b 50%, #0f172a 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      overflow-x: hidden;
+    }
+    .top-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 900px;
+      gap: 12px;
+      padding: 12px 20px;
+      background: rgba(30, 41, 59, 0.75);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      margin-bottom: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fbbf24;
+    }
+    .badge-pill {
+      font-size: 0.75rem;
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      font-weight: 600;
+    }
+    .btn-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .control-btn {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .control-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+    .control-btn.active {
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      border-color: var(--accent);
+    }
+    .preview-container {
+      position: relative;
+      perspective: 1000px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-bottom: 30px;
+    }
+    /* Mobile Device Mockup */
+    .phone-mockup {
+      width: 400px;
+      height: 840px;
+      background: #09090b;
+      border-radius: 54px;
+      padding: 13px;
+      box-shadow: 
+        0 0 0 4px #27272a,
+        0 0 0 7px #18181b,
+        0 25px 50px -12px rgba(0, 0, 0, 0.7),
+        0 0 40px rgba(245, 158, 11, 0.15);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    /* Dynamic Island */
+    .dynamic-island {
+      position: absolute;
+      top: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 28px;
+      background: #000;
+      border-radius: 20px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 10px;
+      pointer-events: none;
+    }
+    .island-camera {
+      width: 10px;
+      height: 10px;
+      background: #111827;
+      border-radius: 50%;
+      border: 1px solid #1f2937;
+    }
+    .island-sensor {
+      width: 8px;
+      height: 8px;
+      background: #030712;
+      border-radius: 50%;
+    }
+    /* Screen Frame */
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      border-radius: 42px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Status Bar */
+    .status-bar {
+      height: 44px;
+      background: #0d5c3a; /* Match form brand header */
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      padding: 0 24px 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #ffffff;
+      z-index: 10;
+      user-select: none;
+    }
+    /* Iframe */
+    .frame-content {
+      width: 100%;
+      height: calc(100% - 44px);
+      border: none;
+      background: #fff;
+    }
+    /* Home Indicator bar at bottom */
+    .home-bar {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 130px;
+      height: 5px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      z-index: 20;
+      pointer-events: none;
+    }
+    /* Device size modes */
+    .phone-mockup.mode-compact {
+      width: 360px;
+      height: 760px;
+    }
+    .phone-mockup.mode-tablet {
+      width: 600px;
+      height: 860px;
+      border-radius: 36px;
+    }
+    .phone-mockup.mode-tablet .phone-screen {
+      border-radius: 26px;
+    }
+    .phone-mockup.mode-tablet .dynamic-island {
+      display: none;
+    }
+    .notice-footer {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 10px;
+    }
+    .notice-footer a {
+      color: #38bdf8;
+      text-decoration: none;
+    }
+    .notice-footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Controls Bar -->
+  <div class="top-controls">
+    <div class="brand-title">
+      <span>📱 मोबाइल प्रीव्यू</span>
+      <span class="badge-pill">जन सुराज फॉर्म 2027</span>
+    </div>
+
+    <div class="btn-group">
+      <button class="control-btn active" id="btnPhone" onclick="setDevice('phone')">📱 मोबाइल</button>
+      <button class="control-btn" id="btnCompact" onclick="setDevice('compact')">📲 छोटा स्क्रीन</button>
+      <button class="control-btn" id="btnTablet" onclick="setDevice('tablet')">💻 टैबलेट</button>
+      <button class="control-btn" onclick="reloadFrame()" title="रिफ्रेश करें">🔄 रीलोड</button>
+    </div>
+
+    <div class="btn-group">
+      <a href="index.html" target="_blank" class="control-btn">↗️ फुल स्क्रीन खोलें</a>
+      <a href="admin.html" target="_blank" class="control-btn" style="border-color:#38bdf8;color:#38bdf8;">📊 एडमिन पैनल</a>
+    </div>
+  </div>
+
+  <!-- Device Frame -->
+  <div class="preview-container">
+    <div class="phone-mockup" id="phoneWrapper">
+      <div class="dynamic-island">
+        <div class="island-camera"></div>
+        <div class="island-sensor"></div>
+      </div>
+      
+      <div class="phone-screen">
+        <div class="status-bar">
+          <span id="currentTime">09:41</span>
+          <span style="letter-spacing: 2px;">📶 5G 🔋</span>
+        </div>
+        <iframe id="previewIframe" src="index.html" class="frame-content"></iframe>
+      </div>
+
+      <div class="home-bar"></div>
+    </div>
+  </div>
+
+  <div class="notice-footer">
+    💡 आप सीधे <strong><a href="index.html" target="_blank">http://localhost:8000/index.html</a></strong> या इस प्रीव्यू <strong><a href="preview.html" target="_blank">http://localhost:8000/preview.html</a></strong> पर देख सकते हैं।
+  </div>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      const hrs = String(now.getHours()).padStart(2, '0');
+      const mins = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('currentTime').innerText = hrs + ':' + mins;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function setDevice(type) {
+      const wrapper = document.getElementById('phoneWrapper');
+      document.getElementById('btnPhone').classList.remove('active');
+      document.getElementById('btnCompact').classList.remove('active');
+      document.getElementById('btnTablet').classList.remove('active');
+
+      wrapper.className = 'phone-mockup';
+      if (type === 'compact') {
+        wrapper.classList.add('mode-compact');
+        document.getElementById('btnCompact').classList.add('active');
+      } else if (type === 'tablet') {
+        wrapper.classList.add('mode-tablet');
+        document.getElementById('btnTablet').classList.add('active');
+      } else {
+        document.getElementById('btnPhone').classList.add('active');
+      }
+    }
+
+    function reloadFrame() {
+      const iframe = document.getElementById('previewIframe');
+      iframe.src = iframe.src;
+    }
+  </script>
+</body>
+</html>

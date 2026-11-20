@@ -5,50 +5,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>एडमिन डैशबोर्ड | जन सुराज पंचायती राज 2027</title>
   <link rel="icon" type="image/jpeg" href="assets/banner.jpg">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --primary: #f9b81b;
       --primary-dark: #78350f;
       --bg: #f8fafc;
-      --card: #ffffff;
-      --border: #e2e8f0;
       --text: #0f172a;
       --text-muted: #64748b;
-      --danger: #dc2626;
-      --success: #16a34a;
+      --border: #e2e8f0;
+      --card: #ffffff;
+      --success: #10b981;
+      --danger: #ef4444;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans Devanagari', sans-serif;
       background-color: var(--bg);
       color: var(--text);
-      padding: 20px;
+      padding: 16px;
       min-height: 100vh;
     }
 
-    /* Login Screen Gate */
+    /* Login Screen */
     .login-overlay {
       position: fixed;
       inset: 0;
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 9999;
-      padding: 16px;
+      z-index: 99999;
+      padding: 20px;
     }
     .login-card {
       background: #ffffff;
       border-radius: 16px;
-      padding: 36px 32px;
+      padding: 32px 28px;
       width: 100%;
-      max-width: 420px;
+      max-width: 400px;
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
       text-align: center;
     }
     .login-icon {
-      font-size: 44px;
+      font-size: 40px;
       margin-bottom: 12px;
     }
     .login-title {
@@ -65,17 +67,16 @@
     }
     .login-input {
       width: 100%;
-      padding: 12px 16px;
+      padding: 12px 14px;
       border: 1.5px solid var(--border);
       border-radius: 8px;
       font-size: 15px;
-      outline: none;
       margin-bottom: 12px;
-      transition: all 0.2s;
+      outline: none;
     }
     .login-input:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(249, 184, 27, 0.25);
+      box-shadow: 0 0 0 3px rgba(249, 184, 27, 0.2);
     }
     .login-btn {
       width: 100%;
@@ -103,7 +104,7 @@
     /* Dashboard Layout */
     #dashboardView {
       display: none;
-      max-width: 1400px;
+      max-width: 1440px;
       margin: 0 auto;
     }
     .header {
@@ -162,53 +163,54 @@
     .btn-danger {
       color: var(--danger);
       border-color: #fecaca;
+      background: #fff5f5;
     }
     .btn-danger:hover {
-      background: #fef2f2;
+      background: #fee2e2;
     }
 
     /* Stats Grid */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 16px;
       margin-bottom: 24px;
     }
     .stat-card {
       background: var(--card);
+      border: 1px solid var(--border);
       padding: 18px 20px;
       border-radius: 12px;
-      border: 1px solid var(--border);
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
     .stat-label {
       font-size: 13px;
       color: var(--text-muted);
-      font-weight: 500;
+      font-weight: 600;
+      margin-bottom: 6px;
     }
     .stat-val {
       font-size: 28px;
       font-weight: 800;
-      color: var(--text);
-      margin-top: 4px;
+      color: #0f172a;
     }
 
-    /* Filters Card */
+    /* Filters */
     .filter-card {
       background: var(--card);
+      border: 1px solid var(--border);
       padding: 16px;
       border-radius: 12px;
-      border: 1px solid var(--border);
       margin-bottom: 20px;
       display: flex;
-      gap: 12px;
+      gap: 14px;
       flex-wrap: wrap;
     }
     .filter-input {
       flex: 1;
       min-width: 200px;
       padding: 10px 14px;
-      border: 1px solid var(--border);
+      border: 1.5px solid var(--border);
       border-radius: 8px;
       font-size: 14px;
       outline: none;
@@ -220,8 +222,8 @@
     /* Table */
     .table-card {
       background: var(--card);
-      border-radius: 12px;
       border: 1px solid var(--border);
+      border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
@@ -263,6 +265,14 @@
     .tag-post {
       background: #fef3c7;
       color: #92400e;
+    }
+    .tag-bio {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      font-size: 11.5px;
+      text-decoration: none;
+      cursor: pointer;
     }
     .empty-state {
       text-align: center;
@@ -331,6 +341,7 @@
       </div>
       <div class="btn-group">
         <a href="index.html" class="btn" target="_blank">📝 मुख्य फॉर्म देखें ↗</a>
+        <a href="preview.html" class="btn" target="_blank">📱 मोबाइल प्रीव्यू ↗</a>
         <button type="button" class="btn" id="btnOpenSheetSettings">⚙️ Sheet लिंक</button>
         <button type="button" class="btn" id="btnChangePassword">🔑 पासवर्ड बदलें</button>
         <button type="button" class="btn btn-primary" id="btnExportCsv">📥 CSV डाउनलोड</button>
@@ -348,6 +359,14 @@
       <div class="stat-card">
         <div class="stat-label">जिला परिषद दावेदार</div>
         <div class="stat-val" id="stat_zp">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">प्रखंड प्रमुख दावेदार</div>
+        <div class="stat-val" id="stat_pramukh">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">चेयरमैन दावेदार</div>
+        <div class="stat-val" id="stat_chairman">0</div>
       </div>
       <div class="stat-card">
         <div class="stat-label">मुखिया दावेदार</div>
@@ -368,6 +387,8 @@
       <select id="postFilter" class="filter-input" style="flex:0.5; min-width:160px;">
         <option value="">सभी पद (All Posts)</option>
         <option value="जिला परिषद सदस्य">जिला परिषद सदस्य</option>
+        <option value="प्रखंड प्रमुख">प्रखंड प्रमुख</option>
+        <option value="चेयरमैन / मुख्य पार्षद">चेयरमैन / मुख्य पार्षद</option>
         <option value="पंचायत समिति सदस्य">पंचायत समिति सदस्य</option>
         <option value="मुखिया">मुखिया</option>
         <option value="सरपंच">सरपंच</option>
@@ -387,9 +408,12 @@
               <th>दिनांक व समय</th>
               <th>आवेदक का नाम</th>
               <th>मोबाइल नंबर</th>
+              <th>व्हाट्सएप नंबर</th>
+              <th>जन्म तिथि (DOB)</th>
               <th>उम्र</th>
               <th>लिंग</th>
               <th>पद</th>
+              <th>जि.प. क्षेत्र</th>
               <th>जिला</th>
               <th>विधानसभा</th>
               <th>प्रखंड</th>
@@ -398,6 +422,7 @@
               <th>वर्ग</th>
               <th>जाति</th>
               <th>व्यवसाय</th>
+              <th>बायोडाटा</th>
             </tr>
           </thead>
           <tbody id="appTableBody">
@@ -465,38 +490,41 @@
     const passwordInput = document.getElementById('passwordInput');
     const loginErrorMsg = document.getElementById('loginErrorMsg');
 
-    // Check if session already authenticated
-    if (sessionStorage.getItem(AUTH_SESSION_KEY) === 'true') {
-      unlockDashboard();
-    }
-
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const entered = passwordInput.value.trim();
-      const expected = getExpectedPassword();
-
-      if (entered === expected) {
-        sessionStorage.setItem(AUTH_SESSION_KEY, 'true');
-        unlockDashboard();
+    function checkAuth() {
+      if (sessionStorage.getItem(AUTH_SESSION_KEY) === 'true') {
+        showDashboard();
       } else {
-        loginErrorMsg.style.display = 'block';
-        passwordInput.style.borderColor = 'var(--danger)';
-        passwordInput.value = '';
+        loginScreen.style.display = 'flex';
+        dashboardView.style.display = 'none';
         passwordInput.focus();
       }
-    });
+    }
 
-    function unlockDashboard() {
+    function showDashboard() {
       loginScreen.style.display = 'none';
       dashboardView.style.display = 'block';
       loadData();
       setupFilters();
     }
 
-    // Logout
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const entered = passwordInput.value.trim();
+      if (entered === getExpectedPassword()) {
+        sessionStorage.setItem(AUTH_SESSION_KEY, 'true');
+        loginErrorMsg.style.display = 'none';
+        passwordInput.value = '';
+        showDashboard();
+      } else {
+        loginErrorMsg.style.display = 'block';
+        passwordInput.value = '';
+        passwordInput.focus();
+      }
+    });
+
     document.getElementById('btnLogout').addEventListener('click', () => {
       sessionStorage.removeItem(AUTH_SESSION_KEY);
-      window.location.reload();
+      location.reload();
     });
 
     // Change Password Modal
@@ -558,6 +586,8 @@
     function updateStats() {
       document.getElementById('stat_total').textContent = allData.length;
       document.getElementById('stat_zp').textContent = allData.filter(d => d.postApplied === 'जिला परिषद सदस्य').length;
+      document.getElementById('stat_pramukh').textContent = allData.filter(d => d.postApplied === 'प्रखंड प्रमुख').length;
+      document.getElementById('stat_chairman').textContent = allData.filter(d => d.postApplied === 'चेयरमैन / मुख्य पार्षद').length;
       document.getElementById('stat_mukhiya').textContent = allData.filter(d => d.postApplied === 'मुखिया').length;
       document.getElementById('stat_ps').textContent = allData.filter(d => d.postApplied === 'पंचायत समिति सदस्य').length;
     }
@@ -587,6 +617,7 @@
         const matchQuery = !query || 
           (item.fullName && item.fullName.toLowerCase().includes(query)) ||
           (item.mobile && item.mobile.includes(query)) ||
+          (item.whatsapp && item.whatsapp.includes(query)) ||
           (item.refId && item.refId.toLowerCase().includes(query)) ||
           (item.panchayat && item.panchayat.toLowerCase().includes(query));
         const matchDist = !dist || item.district === dist;
@@ -602,15 +633,24 @@
 
       filtered.forEach((row, index) => {
         const tr = document.createElement('tr');
+        
+        let bioHtml = '-';
+        if (row.biodataFileName) {
+          bioHtml = `<span class="tag tag-bio" title="${row.biodataFileName}">📎 ${row.biodataFileName}</span>`;
+        }
+
         tr.innerHTML = `
           <td>${index + 1}</td>
           <td><strong>${row.refId || '-'}</strong></td>
           <td>${row.timestamp || '-'}</td>
           <td>${row.fullName || '-'}</td>
           <td><a href="tel:${row.mobile}" style="color:#0284c7; text-decoration:none;">${row.mobile || '-'}</a></td>
-          <td>${row.age || '-'}</td>
+          <td>${row.whatsapp ? `<a href="https://wa.me/91${row.whatsapp}" target="_blank" style="color:#16a34a; text-decoration:none;">💬 ${row.whatsapp}</a>` : '-'}</td>
+          <td>${row.dob || '-'}</td>
+          <td><strong>${row.age || '-'}</strong></td>
           <td>${row.gender || '-'}</td>
           <td><span class="tag tag-post">${row.postApplied || '-'}</span></td>
+          <td>${row.zpKshetra || '-'}</td>
           <td>${row.district || '-'}</td>
           <td>${row.assembly || '-'}</td>
           <td>${row.block || '-'}</td>
@@ -619,6 +659,7 @@
           <td>${row.category || '-'}</td>
           <td>${row.caste || '-'}</td>
           <td>${row.occupation || '-'}</td>
+          <td>${bioHtml}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -637,10 +678,11 @@
         }
 
         const headers = [
-          'Ref ID', 'Timestamp', 'आवेदक का पूरा नाम', 'मोबाइल नंबर', 'उम्र', 'लिंग',
-          'धर्म', 'जाति', 'वर्ग', 'पद', 'जिला परिषद क्षेत्र संख्या', 'पूर्व में चुनाव लड़े?',
-          'पूर्व का पद', 'शैक्षणिक योग्यता', 'व्यवसाय', 'अनुभव', 'उद्देश्य',
-          'जिला', 'विधानसभा', 'प्रखंड', 'पंचायत', 'वार्ड', 'राय'
+          'Ref ID', 'Timestamp', 'आवेदक का पूरा नाम', 'मोबाइल नंबर', 'व्हाट्सएप नंबर', 'फेसबुक लिंक',
+          'जन्म तिथि (DOB)', 'उम्र (वर्ष व माह)', 'लिंग', 'धर्म', 'जाति', 'वर्ग',
+          'पद', 'जिला परिषद क्षेत्र संख्या', 'पूर्व में चुनाव लड़े?', 'पूर्व का पद',
+          'शैक्षणिक योग्यता', 'व्यवसाय', 'अनुभव', 'उद्देश्य',
+          'जिला', 'विधानसभा', 'प्रखंड', 'पंचायत', 'वार्ड', 'बायोडाटा', 'राय'
         ];
 
         let csvContent = '\uFEFF' + headers.join(',') + '\n';
@@ -650,6 +692,9 @@
             `"${d.timestamp || ''}"`,
             `"${d.fullName || ''}"`,
             `"${d.mobile || ''}"`,
+            `"${d.whatsapp || ''}"`,
+            `"${d.fbLink || ''}"`,
+            `"${d.dob || ''}"`,
             `"${d.age || ''}"`,
             `"${d.gender || ''}"`,
             `"${d.religion || ''}"`,
@@ -668,6 +713,7 @@
             `"${d.block || ''}"`,
             `"${d.panchayat || ''}"`,
             `"${d.ward || ''}"`,
+            `"${d.biodataFileName || ''}"`,
             `"${(d.feedback || '').replace(/"/g, '""')}"`
           ];
           csvContent += row.join(',') + '\n';
@@ -691,6 +737,9 @@
         }
       };
     }
+
+    // Initialize check
+    checkAuth();
   </script>
 </body>
 </html>

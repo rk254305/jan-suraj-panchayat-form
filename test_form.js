@@ -3,8 +3,14 @@
  * Tests:
  * 1. GeoData integrity (38 districts, 522 blocks, 243 assemblies, 1-243 numbering).
  * 2. District to Assembly & Block cascade logic.
- * 3. Form validation and error mapping.
- * 4. Submission payload generation and storage.
+ * 3. Form validation, error mapping, and user requested enhancements:
+ *    - Zila Parishad Kshetra optional without asterisk
+ *    - DOB with automatic age calculation (Year & Month)
+ *    - Contact details (WhatsApp & Facebook link)
+ *    - Education without female qualification text
+ *    - New Posts (प्रखंड प्रमुख & चेयरमैन / मुख्य पार्षद)
+ *    - Biodata optional upload
+ *    - Campaign Poster & QR Code generation
  */
 
 const fs = require('fs');
@@ -106,9 +112,9 @@ assert(sheoharAssemblies && sheoharAssemblies.length === 1, `Sheohar has exactly
 assert(sheoharBlocks && sheoharBlocks.length === 5, `Sheohar has exactly 5 blocks (found: ${sheoharBlocks?.length})`);
 
 // ----------------------------------------------------
-// TEST 3: HTML DOM Validation
+// TEST 3: HTML Structure & User Enhancements Setup
 // ----------------------------------------------------
-console.log('\n--- 3. Testing HTML Structure & Select Setup ---');
+console.log('\n--- 3. Testing HTML Structure & User Enhancements ---');
 const html = fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8');
 
 assert(html.includes('id="district"'), 'index.html contains district select');
@@ -117,15 +123,33 @@ assert(html.includes('id="block"') && html.includes('class="select-input"'), 'in
 assert(html.includes('id="wrap_district"') && html.includes('id="wrap_assembly"') && html.includes('id="wrap_block"') && html.includes('id="wrap_panchayat"'), 'Subfields have dedicated wrapper IDs for field-level error isolation');
 assert(!html.includes('id="assemblyList"'), 'Old global datalist assemblyList has been removed');
 
+// User requested checks
+assert(html.includes('id="dob"'), 'index.html contains DOB datepicker input (replacing age select)');
+assert(html.includes('id="ageCalculationBox"'), 'index.html contains automated age calculation box');
+assert(html.includes('id="whatsapp"'), 'index.html contains WhatsApp number input');
+assert(html.includes('id="sameAsMobile"'), 'index.html contains "Same as Mobile" checkbox');
+assert(html.includes('id="fbLink"'), 'index.html contains Facebook link input');
+assert(html.includes('value="प्रखंड प्रमुख"'), 'index.html contains "प्रखंड प्रमुख" post option');
+assert(html.includes('value="चेयरमैन / मुख्य पार्षद"'), 'index.html contains "चेयरमैन / मुख्य पार्षद" post option');
+assert(!html.includes('विशेषकर महिला उम्मीदवारों हेतु'), 'Female candidate note has been successfully removed from education options');
+assert(html.includes('id="card_zpKshetra"') && !html.includes('id="card_zpKshetra">\n        <label class="question-label" for="zpKshetra">\n          9. जिला परिषद प्रादेशिक निर्वाचन क्षेत्र संख्या (1 से 75 तक) <span class="req-star">*</span>'), 'Zila Parishad Kshetra does not have mandatory asterisk');
+assert(html.includes('id="biodataFile"'), 'index.html contains Biodata file upload input');
+assert(html.includes('assets/qrcode.min.js'), 'index.html includes local QR code library script');
+assert(html.includes('id="creativeModal"'), 'index.html contains creative campaign poster modal');
+
 // ----------------------------------------------------
-// TEST 4: CSS Styles for Field-Level Errors
+// TEST 4: CSS Styles
 // ----------------------------------------------------
-console.log('\n--- 4. Testing CSS Field-Level Error Definitions ---');
+console.log('\n--- 4. Testing CSS Definitions ---');
 const css = fs.readFileSync(path.join(__dirname, 'style.css'), 'utf8');
 
 assert(css.includes('.sub-field.has-error .error-msg'), 'CSS includes isolated .sub-field.has-error .error-msg');
 assert(css.includes('.sub-field.has-error .select-input'), 'CSS includes isolated red border styling for .sub-field inputs');
 assert(css.includes('.card.has-error > .error-msg'), 'CSS uses direct child selector for single card errors');
+assert(css.includes('.age-calc-box'), 'CSS includes styles for automated age calculation box');
+assert(css.includes('.file-upload-box'), 'CSS includes styles for biodata drag & drop box');
+assert(css.includes('.campaign-poster'), 'CSS includes campaign poster styling');
+assert(css.includes('@media print'), 'CSS includes print stylesheet for campaign poster');
 
 // ----------------------------------------------------
 // TEST 5: JavaScript Logic Simulation
@@ -135,7 +159,10 @@ const appJs = fs.readFileSync(path.join(__dirname, 'app.js'), 'utf8');
 
 assert(appJs.includes('BIHAR_DISTRICT_ASSEMBLIES[selectedDist]'), 'app.js populates assembly strictly from BIHAR_DISTRICT_ASSEMBLIES[selectedDist]');
 assert(appJs.includes('BIHAR_GEO_DATA[selectedDist]'), 'app.js populates block strictly from BIHAR_GEO_DATA[selectedDist]');
-assert(appJs.includes('wrap_district') && appJs.includes('wrap_assembly') && appJs.includes('wrap_block') && appJs.includes('wrap_panchayat'), 'app.js validates each location subfield individually');
+assert(appJs.includes('setupDobAgeCalculator'), 'app.js includes setupDobAgeCalculator function');
+assert(appJs.includes('setupContactFields'), 'app.js includes setupContactFields function');
+assert(appJs.includes('setupBiodataUpload'), 'app.js includes setupBiodataUpload function');
+assert(appJs.includes('setupQrCreativeModal'), 'app.js includes setupQrCreativeModal function');
 assert(appJs.includes('resetFormState'), 'app.js has resetFormState function');
 
 console.log('\n====================================================');

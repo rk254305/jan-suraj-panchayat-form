@@ -12,7 +12,7 @@
  * 7. Set:
  *    - Description: "Jan Suraaj Panchayat Form Receiver"
  *    - Execute as: "Me" (your Google account)
- *    - Who has access: "Anyone" (crucial for web forms)
+ *    - Who has access: "Anyone" (crucial for public web forms)
  * 8. Click 'Deploy' and authorize access.
  * 9. Copy the generated Web App URL and paste it into config.js or the app's Settings modal!
  */
@@ -22,7 +22,10 @@ const HEADERS = [
   'आवेदन संदर्भ संख्या (Ref ID)',
   'आवेदक का पूरा नाम',
   'मोबाइल नंबर',
-  'उम्र',
+  'व्हाट्सएप नंबर',
+  'फेसबुक लिंक',
+  'जन्म तिथि (DOB)',
+  'उम्र (वर्ष व माह)',
   'लिंग',
   'धर्म',
   'जाति',
@@ -40,6 +43,7 @@ const HEADERS = [
   'प्रखंड',
   'पंचायत',
   'वार्ड संख्या',
+  'बायोडाटा फाइल',
   'अपनी राय'
 ];
 
@@ -55,7 +59,7 @@ function doGet(e) {
   return ContentService
     .createTextOutput(JSON.stringify({ 
       status: 'active', 
-      message: 'जन सुराज पंचायती राज 2027 Webhook चालू है। डेटा POST मेथड से सुरक्षित रूप से प्राप्त करने के लिए तैयार है।' 
+      message: 'जन सुराज पंचायती राज 2027 Webhook सक्रिय है। डेटा सुरक्षित रूप से प्राप्त करने के लिए तैयार है।' 
     }))
     .setMimeType(ContentService.MimeType.JSON);
 }
@@ -94,7 +98,7 @@ function handleResponse(e) {
       data = e.parameter;
     }
 
-    // Guard: Do not write empty row if no name or mobile or refId is present
+    // Guard: Do not write empty row if no name, mobile, or district is present
     if (!data.fullName && !data.mobile && !data.district) {
       return ContentService
         .createTextOutput(JSON.stringify({ 
@@ -107,11 +111,18 @@ function handleResponse(e) {
     const timestamp = Utilities.formatDate(new Date(), "Asia/Kolkata", "dd/MM/yyyy HH:mm:ss");
     const refId = data.refId || 'JS-' + Math.floor(100000 + Math.random() * 900000);
 
+    const biodataInfo = data.biodataFileName 
+      ? (data.biodataFileName + (data.biodataFileSize ? ' (' + data.biodataFileSize + ')' : ''))
+      : '';
+
     const row = [
       timestamp,
       refId,
       data.fullName || '',
       data.mobile || '',
+      data.whatsapp || '',
+      data.fbLink || '',
+      data.dob || '',
       data.age || '',
       data.gender || '',
       data.religion || '',
@@ -130,6 +141,7 @@ function handleResponse(e) {
       data.block || '',
       data.panchayat || '',
       data.ward || '',
+      biodataInfo,
       data.feedback || ''
     ];
 

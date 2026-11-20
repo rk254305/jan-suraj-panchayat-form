@@ -9,7 +9,7 @@
   <!-- Google Fonts: Noto Sans Devanagari -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap"
     rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -17,6 +17,19 @@
 <body>
 
   <div class="container">
+
+    <!-- Top Action Bar -->
+    <div class="top-bar">
+      <button type="button" class="icon-btn creative-pill" id="btnOpenCreative">
+        <span>🎨</span> प्रचार पोस्टर व QR कोड
+      </button>
+      <button type="button" class="icon-btn" id="btnOpenSettings">
+        <span>⚙️</span> शीट लिंक
+      </button>
+      <a href="admin.html" target="_blank" class="icon-btn" style="color:#0369a1; border-color:#bae6fd;">
+        <span>📊</span> एडमिन पैनल ↗
+      </a>
+    </div>
 
     <!-- Main Header Card -->
     <div class="header-card">
@@ -29,6 +42,19 @@
           लोकतांत्रिक तरीके से बिहार के बदलाव में अपनी भागीदारी सुनिश्चित करना चाहते हैं, वे इस आवेदन फॉर्म को भरकर अपनी
           दावेदारी दर्ज करें।
         </p>
+        
+        <!-- QR Scan & Share Pill -->
+        <div class="header-qr-pill" id="bannerQrPill">
+          <div class="qr-pill-left">
+            <span class="qr-pill-icon">📱</span>
+            <div>
+              <div class="qr-pill-main">QR कोड स्कैन करके सीधे आवेदन करें</div>
+              <div class="qr-pill-sub">प्रचार पोस्टर, प्रिंट व व्हाट्सएप शेयरिंग उपलब्ध</div>
+            </div>
+          </div>
+          <button type="button" class="qr-pill-btn">पोस्टर देखें →</button>
+        </div>
+
         <div class="required-notice">* अनिवार्य प्रश्न इंगित करता है (Indicates required question)</div>
       </div>
     </div>
@@ -46,26 +72,61 @@
         <div class="error-msg">कृपया आवेदक का पूरा नाम दर्ज करें।</div>
       </div>
 
-      <!-- 2. मोबाइल नंबर -->
+      <!-- 2. मोबाइल एवं संपर्क विवरण (Mobile, WhatsApp, Facebook) -->
       <div class="card" id="card_mobile">
         <label class="question-label" for="mobile">
           2. आवेदक का मोबाइल नंबर <span class="req-star">*</span>
         </label>
-        <input type="tel" id="mobile" name="mobile" class="input-text" placeholder="10 अंकों का मोबाइल नंबर"
+        <input type="tel" id="mobile" name="mobile" class="input-text" placeholder="10 अंकों का प्राथमिक मोबाइल नंबर"
           maxlength="10" pattern="[6-9][0-9]{9}" required>
         <div class="error-msg">कृपया एक वैध 10-अंकीय मोबाइल नंबर दर्ज करें (6-9 से शुरू)।</div>
+
+        <!-- WhatsApp Number (Optional) -->
+        <div class="contact-subfield">
+          <div class="contact-header-row">
+            <label class="question-label sublabel" for="whatsapp">
+              व्हाट्सएप नंबर (WhatsApp No.) <span class="optional-tag">(वैकल्पिक / Optional)</span>
+            </label>
+            <label class="same-as-mobile-label">
+              <input type="checkbox" id="sameAsMobile">
+              <span>मोबाइल नंबर ही व्हाट्सएप है</span>
+            </label>
+          </div>
+          <input type="tel" id="whatsapp" name="whatsapp" class="input-text" placeholder="10 अंकों का व्हाट्सएप नंबर दर्ज करें"
+            maxlength="10">
+        </div>
+
+        <!-- Facebook Link (Optional) -->
+        <div class="contact-subfield">
+          <label class="question-label sublabel" for="fbLink">
+            फेसबुक लिंक (Facebook Profile / Page) <span class="optional-tag">(वैकल्पिक / Optional)</span>
+          </label>
+          <input type="url" id="fbLink" name="fbLink" class="input-text"
+            placeholder="उदा. https://facebook.com/yourprofile या प्रोफाइल नाम">
+        </div>
       </div>
 
-      <!-- 3. उम्र -->
-      <div class="card" id="card_age">
-        <label class="question-label" for="age">
-          3. उम्र (वर्ष) <span class="req-star">*</span>
+      <!-- 3. जन्म तिथि (DOB) एवं उम्र गणना -->
+      <div class="card" id="card_dob">
+        <label class="question-label" for="dob">
+          3. जन्म तिथि (Date of Birth) <span class="req-star">*</span>
         </label>
-        <select id="age" name="age" class="select-input" required>
-          <option value="">-- अपनी उम्र चुनें --</option>
-          <!-- Auto-populated 21 to 75 via JS -->
-        </select>
-        <div class="error-msg">कृपया अपनी उम्र का चयन करें (न्यूनतम 21 वर्ष)।</div>
+        <div class="question-help">अपनी सही जन्म तिथि चुनें। आपकी उम्र (वर्ष एवं माह) स्वतः सटीक रूप से कैलकुलेट हो जाएगी।</div>
+        <input type="date" id="dob" name="dob" class="input-text" required>
+        <div class="error-msg" id="err_dob">कृपया अपनी सही जन्म तिथि चुनें।</div>
+
+        <!-- Automated Age Calculation Display Box -->
+        <div id="ageCalculationBox" class="age-calc-box" style="display:none;">
+          <div class="age-calc-row">
+            <span class="age-calc-icon">🎂</span>
+            <div class="age-calc-details">
+              <div class="age-calc-title">गणना की गई वास्तविक उम्र (Calculated Age):</div>
+              <div class="age-calc-val" id="calculatedAgeText">-</div>
+            </div>
+          </div>
+          <div class="age-calc-note" id="eligibilityNotice"></div>
+        </div>
+        <input type="hidden" id="calculatedAge" name="calculatedAge" value="">
       </div>
 
       <!-- 4. लिंग -->
@@ -171,6 +232,14 @@
             <span class="option-text">जिला परिषद सदस्य</span>
           </label>
           <label class="radio-option">
+            <input type="radio" name="postApplied" value="प्रखंड प्रमुख">
+            <span class="option-text">प्रखंड प्रमुख (Block Pramukh)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="postApplied" value="चेयरमैन / मुख्य पार्षद">
+            <span class="option-text">चेयरमैन / मुख्य पार्षद (Chairman)</span>
+          </label>
+          <label class="radio-option">
             <input type="radio" name="postApplied" value="पंचायत समिति सदस्य">
             <span class="option-text">पंचायत समिति सदस्य</span>
           </label>
@@ -194,17 +263,17 @@
         <div class="error-msg">कृपया चुनाव लड़ने वाले पद का चयन करें।</div>
       </div>
 
-      <!-- 9. CONDITIONAL: अगर जिला परिषद का चुनाव लड़ना चाहते हैं तो क्षेत्र संख्या बतायें -->
+      <!-- 9. जिला परिषद प्रादेशिक निर्वाचन क्षेत्र संख्या (बिना Asterisk / ऐच्छिक) -->
       <div class="card conditional-field" id="card_zpKshetra">
         <label class="question-label" for="zpKshetra">
-          9. जिला परिषद प्रादेशिक निर्वाचन क्षेत्र संख्या (1 से 75 तक) <span class="req-star">*</span>
+          9. जिला परिषद प्रादेशिक निर्वाचन क्षेत्र संख्या (1 से 75 तक)
+          <span class="optional-tag">(जिला परिषद प्रत्याशी हेतु - ऐच्छिक)</span>
         </label>
-        <div class="question-help">यदि आप जिला परिषद का चुनाव लड़ना चाहते हैं तो क्षेत्र संख्या बतायें।</div>
+        <div class="question-help">यदि आप जिला परिषद का चुनाव लड़ना चाहते हैं तो अपना क्षेत्र संख्या बतायें।</div>
         <select id="zpKshetra" name="zpKshetra" class="select-input">
-          <option value="">-- प्रादेशिक निर्वाचन क्षेत्र संख्या चुनें --</option>
+          <option value="">-- प्रादेशिक निर्वाचन क्षेत्र संख्या चुनें (ऐच्छिक) --</option>
           <!-- 1 to 75 populated via JS -->
         </select>
-        <div class="error-msg">कृपया जिला परिषद क्षेत्र संख्या चुनें।</div>
       </div>
 
       <!-- 10. क्या आप पहले भी पंचायत चुनाव लड़ चुके हैं? -->
@@ -234,6 +303,14 @@
           <label class="radio-option">
             <input type="radio" name="pastPost" value="जिला परिषद सदस्य">
             <span class="option-text">जिला परिषद सदस्य</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="pastPost" value="प्रखंड प्रमुख">
+            <span class="option-text">प्रखंड प्रमुख</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="pastPost" value="चेयरमैन / मुख्य पार्षद">
+            <span class="option-text">चेयरमैन / मुख्य पार्षद</span>
           </label>
           <label class="radio-option">
             <input type="radio" name="pastPost" value="पंचायत समिति सदस्य">
@@ -267,7 +344,7 @@
         <div class="error-msg">कृपया पूर्व में लड़े गए पद का चयन करें।</div>
       </div>
 
-      <!-- 12. आपकी शैक्षणिक योग्यता -->
+      <!-- 12. आपकी शैक्षणिक योग्यता (विशेषकर महिला उम्मीदवार हटा दिया गया) -->
       <div class="card" id="card_education">
         <label class="question-label">
           12. आपकी शैक्षणिक योग्यता <span class="req-star">*</span>
@@ -275,8 +352,7 @@
         <div class="radio-group">
           <label class="radio-option" id="opt_eighth">
             <input type="radio" name="education" value="आठवीं पास" required>
-            <span class="option-text">आठवीं पास <small style="color:#d97706; font-size:12px;">(विशेषकर महिला उम्मीदवारों
-                हेतु)</small></span>
+            <span class="option-text">आठवीं पास</span>
           </label>
           <label class="radio-option">
             <input type="radio" name="education" value="मैट्रिक (10वीं)">
@@ -398,11 +474,40 @@
         </div>
       </div>
 
-      <!-- 17. अपनी राय दें -->
+      <!-- 17. बायोडाटा / रिज्यूमे अपलोड करें (यदि हो तो - ऐच्छिक) -->
+      <div class="card" id="card_biodata">
+        <label class="question-label" for="biodataFile">
+          17. बायोडाटा / रिज्यूमे अपलोड करें <span class="optional-tag">(यदि हो तो - ऐच्छिक / Optional)</span>
+        </label>
+        <div class="question-help">
+          यदि आपके पास तैयार बायोडाटा है तो PDF, Word या फोटो फाइल यहाँ अपलोड करें (अधिकतम 5 MB)। यह अनिवार्य नहीं है।
+        </div>
+
+        <div class="file-upload-box" id="fileDropZone">
+          <input type="file" id="biodataFile" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style="display:none;">
+          <div class="upload-prompt" id="uploadPrompt" onclick="document.getElementById('biodataFile').click()">
+            <div class="upload-icon">📄</div>
+            <div class="upload-text"><strong>बायोडाटा फाइल चुनने के लिए यहाँ क्लिक करें</strong></div>
+            <div class="upload-subtext">या फाइल को यहाँ ड्रैग करके छोड़ें (PDF, Word, JPG, PNG)</div>
+            <div class="upload-hint">अधिकतम फाइल साइज़: 5 MB</div>
+          </div>
+          <div class="file-info-preview" id="fileInfoPreview" style="display:none;">
+            <div class="file-details">
+              <span class="file-icon-badge">📎</span>
+              <div>
+                <div class="file-name" id="fileNameDisplay">biodata.pdf</div>
+                <div class="file-size" id="fileSizeDisplay">1.2 MB</div>
+              </div>
+            </div>
+            <button type="button" class="btn-remove-file" id="btnRemoveFile" title="फाइल हटाएं">✕ हटाएं</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 18. अपनी राय दें -->
       <div class="card" id="card_feedback">
         <label class="question-label" for="feedback">
-          17. अपनी राय दें। <span style="font-size:13px; color:var(--text-muted); font-weight:normal;">(वैकल्पिक /
-            Optional)</span>
+          18. अपनी राय दें। <span class="optional-tag">(वैकल्पिक / Optional)</span>
         </label>
         <div class="question-help">जन सुराज अभियान या बिहार के विकास से संबंधित अपने सुझाव या विचार यहाँ लिख सकते हैं।
         </div>
@@ -451,6 +556,14 @@
           <span class="summary-key">मोबाइल नंबर:</span>
           <span class="summary-val" id="sum_mobile">-</span>
         </div>
+        <div class="summary-item" id="row_sum_wa" style="display:none;">
+          <span class="summary-key">व्हाट्सएप नंबर:</span>
+          <span class="summary-val" id="sum_whatsapp">-</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-key">जन्म तिथि एवं उम्र:</span>
+          <span class="summary-val" id="sum_age">-</span>
+        </div>
         <div class="summary-item">
           <span class="summary-key">प्रत्याशी पद:</span>
           <span class="summary-val" id="sum_post">-</span>
@@ -458,6 +571,10 @@
         <div class="summary-item">
           <span class="summary-key">जिला व प्रखंड:</span>
           <span class="summary-val" id="sum_location">-</span>
+        </div>
+        <div class="summary-item" id="row_sum_bio" style="display:none;">
+          <span class="summary-key">बायोडाटा:</span>
+          <span class="summary-val" id="sum_biodata" style="color:#059669;">संलग्न (Attached)</span>
         </div>
       </div>
 
@@ -475,6 +592,63 @@
           + नया आवेदन भरें
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- Creative & Campaign Poster Modal with QR Code -->
+  <div class="modal-overlay" id="creativeModal">
+    <div class="modal-card creative-modal-card">
+      
+      <!-- Printable Poster Card -->
+      <div class="campaign-poster" id="printablePoster">
+        <div class="poster-header-strip">
+          <span class="poster-badge">बिहार पंचायती राज चुनाव - 2027</span>
+        </div>
+
+        <div class="poster-brand">
+          <img src="assets/banner.jpg" alt="जन सुराज" class="poster-banner-img">
+        </div>
+
+        <div class="poster-body">
+          <h2 class="poster-main-title">प्रत्याशी आवेदन आमंत्रण</h2>
+          <div class="poster-tagline">सही लोग • सही सोच • सामूहिक प्रयास</div>
+          <p class="poster-desc">
+            बिहार के बदलाव में अपनी भागीदारी सुनिश्चित करें! वार्ड सदस्य, मुखिया, सरपंच, पंचायत समिति, जिला परिषद, प्रखंड प्रमुख व चेयरमैन पद हेतु अपनी दावेदारी ऑनलाइन दर्ज करें।
+          </p>
+
+          <div class="poster-qr-wrapper">
+            <div class="qr-glow-card">
+              <div id="creativeQrCode" class="qr-code-box"></div>
+              <div class="qr-callout-pill">📲 मोबाइल कैमरे से QR कोड स्कैन करें</div>
+            </div>
+            <div class="poster-cta-text">
+              <strong>स्कैन करके तुरंत आवेदन करें</strong>
+              <div class="poster-web-url" id="creativeFormUrl">https://...</div>
+            </div>
+          </div>
+
+          <div class="poster-footer-note">
+            <span>जन सुराज अभियान | संपर्क: 1800-XXX-XXXX</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Poster Action Bar (Hidden during print) -->
+      <div class="poster-actions no-print">
+        <button type="button" class="btn-print-poster" id="btnPrintCreative">
+          <span>🖨️</span> पोस्टर प्रिंट / PDF सेव करें
+        </button>
+        <a href="#" target="_blank" class="btn-share-poster" id="btnSharePosterWa">
+          <span>💬</span> व्हाट्सएप पर शेयर करें
+        </a>
+        <button type="button" class="btn-copy-url" id="btnCopyFormLink">
+          <span>📋</span> लिंक कॉपी करें
+        </button>
+        <button type="button" class="btn-close-creative" id="btnCloseCreative">
+          ✕ बंद करें
+        </button>
+      </div>
+
     </div>
   </div>
 
@@ -513,6 +687,7 @@
   </div>
 
   <!-- Scripts -->
+  <script src="assets/qrcode.min.js"></script>
   <script src="geoData.js"></script>
   <script src="config.js"></script>
   <script src="app.js"></script>
