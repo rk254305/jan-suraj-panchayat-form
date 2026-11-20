@@ -7,8 +7,8 @@
  */
 
 const APP_CONFIG = {
-  // Google Apps Script Web App URL (Paste your deployed web app URL here)
-  GOOGLE_SHEET_WEBHOOK_URL: "https://script.google.com/macros/s/AKfycbz_SAMPLE_DEPLOYMENT_URL/exec",
+  // Google Apps Script Web App URL (Live connected to user Google Sheet)
+  GOOGLE_SHEET_WEBHOOK_URL: "https://script.google.com/macros/s/AKfycbw0jzRvvibQBjVCoWnJm1n2rKpA3H_5j61U5_O-WTxJREQIs5PlpW0zm3Uz-4o-daj6qQ/exec",
   
   // App Title
   APP_TITLE: "जन सुराज - पंचायती राज चुनाव 2027 प्रत्याशी आवेदन",
