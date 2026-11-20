@@ -436,9 +436,11 @@ function setupQrCreativeModal() {
 
   if (!modal) return;
 
-  // Determine current form public URL
-  const currentUrl = window.location.href.split('#')[0].replace('preview.html', 'index.html');
-  if (formUrlDisplay) formUrlDisplay.textContent = currentUrl;
+  // Determine official form public URL for QR & Poster
+  const formUrl = (typeof APP_CONFIG !== 'undefined' && APP_CONFIG.FORM_URL)
+    ? APP_CONFIG.FORM_URL
+    : 'https://jan-suraj-panchayat-form.vercel.app/';
+  if (formUrlDisplay) formUrlDisplay.textContent = formUrl;
 
   let qrRendered = false;
 
@@ -447,7 +449,7 @@ function setupQrCreativeModal() {
     qrContainer.innerHTML = '';
     if (typeof QRCode !== 'undefined') {
       new QRCode(qrContainer, {
-        text: currentUrl,
+        text: formUrl,
         width: 190,
         height: 190,
         colorDark: '#0d5c3a',
@@ -480,11 +482,11 @@ function setupQrCreativeModal() {
 
   btnCopy?.addEventListener('click', () => {
     if (navigator.clipboard) {
-      navigator.clipboard.writeText(currentUrl).then(() => {
-        alert('आवेदन फॉर्म लिंक कॉपी कर लिया गया है:\n' + currentUrl);
+      navigator.clipboard.writeText(formUrl).then(() => {
+        alert('आवेदन फॉर्म लिंक कॉपी कर लिया गया है:\n' + formUrl);
       });
     } else {
-      prompt('आवेदन फॉर्म लिंक कॉपी करें:', currentUrl);
+      prompt('आवेदन फॉर्म लिंक कॉपी करें:', formUrl);
     }
   });
 
@@ -493,7 +495,7 @@ function setupQrCreativeModal() {
       `*जन सुराज | मिशन पंचायती राज चुनाव - 2027*\n\n` +
       `बिहार में बदलाव की राजनीति में सही और कर्मठ लोगों की भागीदारी!\n\n` +
       `मुखिया, सरपंच, वार्ड, पंचायत समिति, जिला परिषद, प्रखंड प्रमुख व चेयरमैन पद हेतु अपनी उम्मीदवारी का आवेदन इस लिंक पर दर्ज करें:\n\n` +
-      `👉 ${currentUrl}\n\n` +
+      `👉 ${formUrl}\n\n` +
       `सही लोग • सही सोच • सामूहिक प्रयास\nजय बिहार, जय जन सुराज!`
     );
     btnShareWa.href = `https://api.whatsapp.com/send?text=${waPosterMsg}`;

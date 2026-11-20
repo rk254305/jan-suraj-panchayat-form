@@ -17,6 +17,9 @@
  * 9. Copy the generated Web App URL and paste it into config.js or the app's Settings modal!
  */
 
+// Target Google Sheet ID (User's Google Sheet: https://docs.google.com/spreadsheets/d/1gkYyqhc04suUydoU_I-5Ia2EJtbW__Dc53D-EHwmHjs/edit)
+const TARGET_SPREADSHEET_ID = "1gkYyqhc04suUydoU_I-5Ia2EJtbW__Dc53D-EHwmHjs";
+
 const HEADERS = [
   'Timestamp',
   'आवेदन संदर्भ संख्या (Ref ID)',
@@ -69,7 +72,16 @@ function handleResponse(e) {
   lock.tryLock(10000);
 
   try {
-    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    let ss;
+    try {
+      if (TARGET_SPREADSHEET_ID) {
+        ss = SpreadsheetApp.openById(TARGET_SPREADSHEET_ID);
+      } else {
+        ss = SpreadsheetApp.getActiveSpreadsheet();
+      }
+    } catch (errOpen) {
+      ss = SpreadsheetApp.getActiveSpreadsheet();
+    }
     let sheet = ss.getSheetByName('आवेदन_डेटा') || ss.getActiveSheet();
     
     // Ensure sheet has headers
