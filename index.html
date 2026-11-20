@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>जन सुराज | पंचायती राज चुनाव प्रत्याशी आवेदन फॉर्म 2027</title>
+  <link rel="icon" type="image/jpeg" href="assets/banner.jpg">
+  <!-- Google Fonts: Noto Sans Devanagari -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Top Action Links -->
+    <div class="top-bar">
+      <button type="button" class="icon-btn" id="btnOpenSettings" title="Google Sheet सेटिंग्स">
+        ⚙️ <span>शीट लिंक</span>
+      </button>
+      <a href="admin.html" class="icon-btn" title="एडमिन पैनल व एक्सपोर्ट">
+        📊 <span>एडमिन पैनल</span>
+      </a>
+    </div>
+
+    <!-- Main Header Card -->
+    <div class="header-card">
+      <img src="assets/banner.jpg" alt="जन सुराज - मिशन पंचायती राज चुनाव 2027" class="banner-img">
+      <div class="header-content">
+        <h1 class="form-title">पंचायती राज चुनाव प्रत्याशी आवेदन फॉर्म</h1>
+        <div class="badge-subtitle">बदलाव की राजनीति में सही लोगों की भागीदारी!</div>
+        <p class="form-description">
+          जो साथी पंचायत से प्रखंड स्तर तक नेतृत्व करना चाहते हैं और पंचायती राज व्यवस्था के किसी भी पद पर चुनाव लड़कर लोकतांत्रिक तरीके से बिहार के बदलाव में अपनी भागीदारी सुनिश्चित करना चाहते हैं, वे इस आवेदन फॉर्म को भरकर अपनी दावेदारी दर्ज करें।
+        </p>
+        <div class="required-notice">* अनिवार्य प्रश्न इंगित करता है (Indicates required question)</div>
+      </div>
+    </div>
+
+    <!-- Application Form -->
+    <form id="panchayatForm" novalidate>
+
+      <!-- 1. आवेदक का पूरा नाम -->
+      <div class="card" id="card_fullName">
+        <label class="question-label" for="fullName">
+          1. आवेदक का पूरा नाम <span class="req-star">*</span>
+        </label>
+        <input type="text" id="fullName" name="fullName" class="input-text" placeholder="अपना पूरा नाम दर्ज करें" required>
+        <div class="error-msg">कृपया आवेदक का पूरा नाम दर्ज करें।</div>
+      </div>
+
+      <!-- 2. मोबाइल नंबर -->
+      <div class="card" id="card_mobile">
+        <label class="question-label" for="mobile">
+          2. आवेदक का मोबाइल नंबर <span class="req-star">*</span>
+        </label>
+        <input type="tel" id="mobile" name="mobile" class="input-text" placeholder="10 अंकों का मोबाइल नंबर" maxlength="10" pattern="[6-9][0-9]{9}" required>
+        <div class="error-msg">कृपया एक वैध 10-अंकीय मोबाइल नंबर दर्ज करें (6-9 से शुरू)।</div>
+      </div>
+
+      <!-- 3. उम्र -->
+      <div class="card" id="card_age">
+        <label class="question-label" for="age">
+          3. उम्र (वर्ष) <span class="req-star">*</span>
+        </label>
+        <select id="age" name="age" class="select-input" required>
+          <option value="">-- अपनी उम्र चुनें --</option>
+          <!-- Auto-populated 21 to 75 via JS -->
+        </select>
+        <div class="error-msg">कृपया अपनी उम्र का चयन करें (न्यूनतम 21 वर्ष)।</div>
+      </div>
+
+      <!-- 4. लिंग -->
+      <div class="card" id="card_gender">
+        <label class="question-label">
+          4. लिंग <span class="req-star">*</span>
+        </label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="gender" value="पुरुष" required>
+            <span class="option-text">पुरुष (Male)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="gender" value="महिला">
+            <span class="option-text">महिला (Female)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="gender" value="अन्य">
+            <span class="option-text">अन्य (Other)</span>
+          </label>
+        </div>
+        <div class="error-msg">कृपया लिंग का चयन करें।</div>
+      </div>
+
+      <!-- 5. धर्म -->
+      <div class="card" id="card_religion">
+        <label class="question-label">
+          5. धर्म <span class="req-star">*</span>
+        </label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="religion" value="हिंदू" required>
+            <span class="option-text">हिंदू (Hindu)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="religion" value="मुस्लिम">
+            <span class="option-text">मुस्लिम (Muslim)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="religion" value="सिख">
+            <span class="option-text">सिख (Sikh)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="religion" value="ईसाई">
+            <span class="option-text">ईसाई (Christian)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="religion" value="अन्य">
+            <span class="option-text">अन्य (Other)</span>
+          </label>
+        </div>
+        <div class="error-msg">कृपया धर्म का चयन करें।</div>
+      </div>
+
+      <!-- 6. जाति -->
+      <div class="card" id="card_caste">
+        <label class="question-label" for="caste">
+          6. जाति <span class="req-star">*</span>
+        </label>
+        <input type="text" id="caste" name="caste" class="input-text" placeholder="अपनी जाति दर्ज करें (उदा. यादव, राजपूत, पासवान, आदि)" required>
+        <div class="error-msg">कृपया अपनी जाति दर्ज करें।</div>
+      </div>
+
+      <!-- 7. वर्ग -->
+      <div class="card" id="card_category">
+        <label class="question-label">
+          7. वर्ग (Category) <span class="req-star">*</span>
+        </label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="category" value="सामान्य (Gen)" required>
+            <span class="option-text">सामान्य (Gen)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="category" value="पिछड़ा (OBC)">
+            <span class="option-text">पिछड़ा (OBC)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="category" value="अतिपिछड़ा (EBC)">
+            <span class="option-text">अतिपिछड़ा (EBC)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="category" value="अनुसूचित जाति (SC)">
+            <span class="option-text">अनुसूचित जाति (SC)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="category" value="अनुसूचित जनजाति (ST)">
+            <span class="option-text">अनुसूचित जनजाति (ST)</span>
+          </label>
+        </div>
+        <div class="error-msg">कृपया वर्ग का चयन करें।</div>
+      </div>
+
+      <!-- 8. आप किस पद के लिए चुनाव लड़ना चाहते हैं? -->
+      <div class="card" id="card_postApplied">
+        <label class="question-label">
+          8. आप किस पद के लिए चुनाव लड़ना चाहते हैं? <span class="req-star">*</span>
+        </label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="postApplied" value="जिला परिषद सदस्य" required>
+            <span class="option-text">जिला परिषद सदस्य</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="postApplied" value="पंचायत समिति सदस्य">
+            <span class="option-text">पंचायत समिति सदस्य</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="postApplied" value="मुखिया">
+            <span class="option-text">मुखिया</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="postApplied" value="सरपंच">
+            <span class="option-text">सरपंच</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="postApplied" value="वार्ड सदस्य">
+            <span class="option-text">वार्ड सदस्य</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="postApplied" value="पंच">
+            <span class="option-text">पंच</span>
+          </label>
+        </div>
+        <div class="error-msg">कृपया चुनाव लड़ने वाले पद का चयन करें।</div>
+      </div>
+
+      <!-- 9. CONDITIONAL: अगर जिला परिषद का चुनाव लड़ना चाहते हैं तो क्षेत्र संख्या बतायें -->
+      <div class="card conditional-field" id="card_zpKshetra">
+        <label class="question-label" for="zpKshetra">
+          9. जिला परिषद प्रादेशिक निर्वाचन क्षेत्र संख्या (1 से 75 तक) <span class="req-star">*</span>
+        </label>
+        <div class="question-help">यदि आप जिला परिषद का चुनाव लड़ना चाहते हैं तो क्षेत्र संख्या बतायें।</div>
+        <select id="zpKshetra" name="zpKshetra" class="select-input">
+          <option value="">-- प्रादेशिक निर्वाचन क्षेत्र संख्या चुनें --</option>
+          <!-- 1 to 75 populated via JS -->
+        </select>
+        <div class="error-msg">कृपया जिला परिषद क्षेत्र संख्या चुनें।</div>
+      </div>
+
+      <!-- 10. क्या आप पहले भी पंचायत चुनाव लड़ चुके हैं? -->
+      <div class="card" id="card_pastElection">
+        <label class="question-label">
+          10. क्या आप पहले भी पंचायत चुनाव लड़ चुके हैं? <span class="req-star">*</span>
+        </label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="pastElection" value="हाँ" required>
+            <span class="option-text">हाँ (Yes)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="pastElection" value="ना">
+            <span class="option-text">ना (No)</span>
+          </label>
+        </div>
+        <div class="error-msg">कृपया इस प्रश्न का उत्तर दें।</div>
+      </div>
+
+      <!-- 11. CONDITIONAL: अगर लड़े हैं तो किस पद पर लड़े हैं -->
+      <div class="card conditional-field" id="card_pastPost">
+        <label class="question-label">
+          11. अगर लड़े हैं तो किस पद पर लड़े हैं? <span class="req-star">*</span>
+        </label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input type="radio" name="pastPost" value="जिला परिषद सदस्य">
+            <span class="option-text">जिला परिषद सदस्य</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="pastPost" value="पंचायत समिति सदस्य">
+            <span class="option-text">पंचायत समिति सदस्य</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="pastPost" value="मुखिया">
+            <span class="option-text">मुखिया</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="pastPost" value="सरपंच">
+            <span class="option-text">सरपंच</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="pastPost" value="वार्ड सदस्य">
+            <span class="option-text">वार्ड सदस्य</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="pastPost" value="पंच">
+            <span class="option-text">पंच</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="pastPost" value="पैक्स">
+            <span class="option-text">पैक्स</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="pastPost" value="अन्य कोई चुनाव">
+            <span class="option-text">अन्य कोई चुनाव</span>
+          </label>
+        </div>
+        <div class="error-msg">कृपया पूर्व में लड़े गए पद का चयन करें।</div>
+      </div>
+
+      <!-- 12. आपकी शैक्षणिक योग्यता -->
+      <div class="card" id="card_education">
+        <label class="question-label">
+          12. आपकी शैक्षणिक योग्यता <span class="req-star">*</span>
+        </label>
+        <div class="radio-group">
+          <label class="radio-option" id="opt_eighth">
+            <input type="radio" name="education" value="आठवीं पास" required>
+            <span class="option-text">आठवीं पास <small style="color:#d97706; font-size:12px;">(विशेषकर महिला उम्मीदवारों हेतु)</small></span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="education" value="मैट्रिक (10वीं)">
+            <span class="option-text">मैट्रिक (10वीं)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="education" value="इंटरमीडिएट (12वीं)">
+            <span class="option-text">इंटरमीडिएट (12वीं)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="education" value="स्नातक (Graduate)">
+            <span class="option-text">स्नातक (Graduate)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="education" value="स्नातकोत्तर (Post Graduate)">
+            <span class="option-text">स्नातकोत्तर (Post Graduate)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="education" value="पीएचडी (PhD)">
+            <span class="option-text">पीएचडी (PhD)</span>
+          </label>
+          <label class="radio-option">
+            <input type="radio" name="education" value="अन्य">
+            <span class="option-text">अन्य</span>
+          </label>
+        </div>
+        <div class="error-msg">कृपया अपनी शैक्षणिक योग्यता चुनें।</div>
+      </div>
+
+      <!-- 13. वर्तमान व्यवसाय -->
+      <div class="card" id="card_occupation">
+        <label class="question-label" for="occupation">
+          13. आपका वर्तमान व्यवसाय <span class="req-star">*</span>
+        </label>
+        <input type="text" id="occupation" name="occupation" class="input-text" placeholder="उदा. किसान, व्यवसायी, शिक्षक, सामाजिक कार्यकर्ता, आदि" required>
+        <div class="error-msg">कृपया अपना वर्तमान व्यवसाय दर्ज करें।</div>
+      </div>
+
+      <!-- 14. सामाजिक एवं राजनीतिक अनुभव -->
+      <div class="card" id="card_experience">
+        <label class="question-label" for="experience">
+          14. सामाजिक एवं राजनीतिक अनुभव <span class="req-star">*</span>
+        </label>
+        <div class="question-help">अपने सामाजिक कार्यों, जन सेवा या राजनीतिक गतिविधियों का संक्षिप्त विवरण दें।</div>
+        <textarea id="experience" name="experience" class="textarea-input" placeholder="यहाँ अपने अनुभव का विवरण लिखें..." required></textarea>
+        <div class="error-msg">कृपया अपने अनुभव का विवरण दर्ज करें।</div>
+      </div>
+
+      <!-- 15. चुनाव लड़ने का आपका प्रमुख उद्देश्य -->
+      <div class="card" id="card_objective">
+        <label class="question-label" for="objective">
+          15. चुनाव लड़ने का आपका प्रमुख उद्देश्य <span class="req-star">*</span>
+        </label>
+        <div class="question-help">आप पंचायत/प्रखंड में क्या बदलाव लाना चाहते हैं और आपका मुख्य विज़न क्या है?</div>
+        <textarea id="objective" name="objective" class="textarea-input" placeholder="अपने उद्देश्य एवं विज़न को यहाँ साझा करें..." required></textarea>
+        <div class="error-msg">कृपया चुनाव लड़ने का अपना उद्देश्य दर्ज करें।</div>
+      </div>
+
+      <!-- 16. भौगोलिक विवरण (Location Hierarchy) -->
+      <div class="card" id="card_location">
+        <label class="question-label">
+          16. भौगोलिक विवरण (बिहार) <span class="req-star">*</span>
+        </label>
+        <div class="question-help">अपना जिला, विधानसभा, प्रखंड एवं पंचायत का विवरण भरें:</div>
+
+        <!-- 16a. जिला -->
+        <div style="margin-bottom: 14px;">
+          <label for="district" style="display:block; font-size:14px; font-weight:600; margin-bottom:4px;">
+            जिला का नाम <span class="req-star">*</span>
+          </label>
+          <select id="district" name="district" class="select-input" required>
+            <option value="">-- जिला चुनें --</option>
+            <!-- 38 districts populated via JS -->
+          </select>
+          <div class="error-msg" id="err_district">कृपया जिला चुनें।</div>
+        </div>
+
+        <!-- 16b. विधानसभा -->
+        <div style="margin-bottom: 14px;">
+          <label for="assembly" style="display:block; font-size:14px; font-weight:600; margin-bottom:4px;">
+            विधानसभा का नाम <span class="req-star">*</span>
+          </label>
+          <input type="text" id="assembly" name="assembly" list="assemblyList" class="input-text" placeholder="विधानसभा क्षेत्र का नाम लिखें या चुनें" required>
+          <datalist id="assemblyList">
+            <!-- 243 constituencies populated via JS -->
+          </datalist>
+          <div class="error-msg" id="err_assembly">कृपया विधानसभा क्षेत्र दर्ज करें या चुनें।</div>
+        </div>
+
+        <!-- 16c. प्रखंड -->
+        <div style="margin-bottom: 14px;">
+          <label for="block" style="display:block; font-size:14px; font-weight:600; margin-bottom:4px;">
+            प्रखंड (Block) का नाम <span class="req-star">*</span>
+          </label>
+          <select id="block" name="block" class="select-input" required disabled>
+            <option value="">-- पहले जिला चुनें --</option>
+          </select>
+          <div class="error-msg" id="err_block">कृपया प्रखंड चुनें।</div>
+        </div>
+
+        <!-- 16d. पंचायत -->
+        <div style="margin-bottom: 14px;">
+          <label for="panchayat" style="display:block; font-size:14px; font-weight:600; margin-bottom:4px;">
+            पंचायत का नाम <span class="req-star">*</span>
+          </label>
+          <input type="text" id="panchayat" name="panchayat" class="input-text" placeholder="अपनी ग्राम पंचायत का नाम लिखें" required>
+          <div class="error-msg" id="err_panchayat">कृपया पंचायत का नाम दर्ज करें।</div>
+        </div>
+
+        <!-- 16e. वार्ड संख्या -->
+        <div>
+          <label for="ward" style="display:block; font-size:14px; font-weight:600; margin-bottom:4px;">
+            वार्ड संख्या <span style="font-size:12px; color:var(--text-muted); font-weight:normal;">(यदि लागू हो)</span>
+          </label>
+          <input type="text" id="ward" name="ward" class="input-text" placeholder="वार्ड नंबर दर्ज करें (वैकल्पिक)">
+        </div>
+      </div>
+
+      <!-- 17. अपनी राय दें -->
+      <div class="card" id="card_feedback">
+        <label class="question-label" for="feedback">
+          17. अपनी राय दें। <span style="font-size:13px; color:var(--text-muted); font-weight:normal;">(वैकल्पिक / Optional)</span>
+        </label>
+        <div class="question-help">जन सुराज अभियान या बिहार के विकास से संबंधित अपने सुझाव या विचार यहाँ लिख सकते हैं।</div>
+        <textarea id="feedback" name="feedback" class="textarea-input" placeholder="अपनी राय या विचार यहाँ लिखें..."></textarea>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="form-actions">
+        <button type="submit" id="btnSubmit" class="btn-submit">
+          <span>आवेदन जमा करें</span>
+          <div class="spinner" id="submitSpinner"></div>
+        </button>
+        <button type="reset" id="btnReset" class="btn-reset">फ़ॉर्म खाली करें (Clear form)</button>
+      </div>
+
+    </form>
+
+    <!-- Footer -->
+    <footer class="form-footer">
+      <p class="footer-logo">जन सुराज अभियान</p>
+      <p>सही लोग • सही सोच • सामूहिक प्रयास</p>
+      <p style="margin-top:6px; font-size:11.5px; opacity:0.8;">मिशन पंचायती राज चुनाव - 2027 | बिहार</p>
+    </footer>
+
+  </div>
+
+  <!-- Success Modal -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal-card">
+      <div class="success-icon-wrap">✓</div>
+      <h2 class="modal-title">आवेदन सफलतापूर्वक दर्ज हो गया!</h2>
+      <p class="modal-subtitle">जन सुराज के साथ जुड़ने और बिहार बदलाव की इस मुहिम में शामिल होने के लिए धन्यवाद।</p>
+      
+      <div class="ref-box">
+        <div class="ref-label">आवेदन संदर्भ संख्या (Reference ID)</div>
+        <div class="ref-code" id="modalRefId">JS-2027-XXXXXX</div>
+      </div>
+
+      <div class="summary-list">
+        <div class="summary-item">
+          <span class="summary-key">आवेदक का नाम:</span>
+          <span class="summary-val" id="sum_name">-</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-key">मोबाइल नंबर:</span>
+          <span class="summary-val" id="sum_mobile">-</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-key">प्रत्याशी पद:</span>
+          <span class="summary-val" id="sum_post">-</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-key">जिला व प्रखंड:</span>
+          <span class="summary-val" id="sum_location">-</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <a href="#" id="btnShareWhatsapp" target="_blank" class="btn-whatsapp">
+          <span>💬 व्हाट्सएप पर साझा करें</span>
+        </a>
+        <button type="button" id="btnPrintReceipt" class="btn-secondary">
+          🖨️ पावती रसीद प्रिंट / डाउनलोड करें
+        </button>
+        <button type="button" id="btnCloseModal" class="btn-secondary" style="margin-top:4px;">
+          + नया आवेदन भरें
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Modal (Google Sheets Connection) -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-card">
+      <h2 class="modal-title" style="text-align:left;">⚙️ Google Sheet कनेक्शन सेटिंग्स</h2>
+      <p class="modal-subtitle" style="text-align:left; font-size:13.5px; margin-bottom:16px;">
+        अपने Google Sheet का Apps Script Web App URL यहाँ पेस्ट करें ताकि हर आवेदन सीधे आपकी Google Sheet में स्वतः सेव हो सके।
+      </p>
+
+      <div style="margin-bottom:16px;">
+        <label for="inputWebhookUrl" style="display:block; font-size:13.5px; font-weight:600; margin-bottom:6px;">
+          Google Apps Script Web App URL:
+        </label>
+        <input type="url" id="inputWebhookUrl" class="input-text" placeholder="https://script.google.com/macros/s/.../exec">
+        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">
+          (गूगल शीट > Extensions > Apps Script > Deploy > Web App से प्राप्त URL)
+        </div>
+      </div>
+
+      <div style="background:#f9fafb; padding:12px; border-radius:8px; font-size:12.5px; line-height:1.5; margin-bottom:18px;">
+        💡 <strong>नोट:</strong> यदि कोई URL सेट नहीं है, तो आवेदन ब्राउज़र के <strong>Local Storage</strong> में सुरक्षित रहते हैं और एडमिन पैनल से एक्सेल/CSV में डाउनलोड किए जा सकते हैं।
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:10px;">
+        <button type="button" id="btnCancelSettings" class="btn-secondary" style="padding:8px 16px;">रद्द करें</button>
+        <button type="button" id="btnSaveSettings" class="btn-submit" style="min-width:auto; padding:8px 20px; font-size:14px;">सेव करें</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="geoData.js"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

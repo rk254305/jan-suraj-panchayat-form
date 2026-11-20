@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>एडमिन डैशबोर्ड | जन सुराज पंचायती राज आवेदन 2027</title>
+  <link rel="icon" type="image/jpeg" href="assets/banner.jpg">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #f9b81b;
+      --primary-dark: #78350f;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 20px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .title-area h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+    .title-area p {
+      font-size: 13.5px;
+      color: var(--text-muted);
+    }
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: white;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: black;
+    }
+    .btn-primary:hover {
+      background: #e5a40e;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--card);
+      padding: 16px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .stat-val {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 4px;
+    }
+    .filter-card {
+      background: var(--card);
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .filter-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+    }
+    .table-card {
+      background: var(--card);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .table-wrap {
+      overflow-x: auto;
+      max-height: 600px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      text-align: left;
+    }
+    th {
+      background: #f1f5f9;
+      padding: 12px 14px;
+      font-weight: 600;
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    td {
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+    tr:hover {
+      background-color: #f8fafc;
+    }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .tag-post {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <div class="title-area">
+      <h1>📊 जन सुराज प्रत्याशी आवेदन प्रबंधन (Admin Dashboard)</h1>
+      <p>मिशन पंचायती राज चुनाव - 2027 | प्राप्त आवेदनों की निगरानी व विश्लेषण</p>
+    </div>
+    <div class="btn-group">
+      <a href="index.html" class="btn">📝 मुख्य फॉर्म खोलें</a>
+      <button type="button" class="btn btn-primary" id="btnExportCsv">📥 CSV / Excel में डाउनलोड करें</button>
+      <button type="button" class="btn" id="btnClearData" style="color:#dc2626;">🗑️ डेटा रीसेट</button>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">कुल प्राप्त आवेदन</div>
+      <div class="stat-val" id="stat_total">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">जिला परिषद दावेदार</div>
+      <div class="stat-val" id="stat_zp">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">मुखिया दावेदार</div>
+      <div class="stat-val" id="stat_mukhiya">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">पंचायत समिति दावेदार</div>
+      <div class="stat-val" id="stat_ps">0</div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-card">
+    <input type="text" id="searchFilter" class="filter-input" placeholder="🔍 नाम, मोबाइल या Ref ID से खोजें...">
+    <select id="distFilter" class="filter-input" style="flex:0.5; min-width:160px;">
+      <option value="">सभी जिले (All Districts)</option>
+    </select>
+    <select id="postFilter" class="filter-input" style="flex:0.5; min-width:160px;">
+      <option value="">सभी पद (All Posts)</option>
+      <option value="जिला परिषद सदस्य">जिला परिषद सदस्य</option>
+      <option value="पंचायत समिति सदस्य">पंचायत समिति सदस्य</option>
+      <option value="मुखिया">मुखिया</option>
+      <option value="सरपंच">सरपंच</option>
+      <option value="वार्ड सदस्य">वार्ड सदस्य</option>
+      <option value="पंच">पंच</option>
+    </select>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Ref ID</th>
+            <th>दिनांक व समय</th>
+            <th>आवेदक का नाम</th>
+            <th>मोबाइल नंबर</th>
+            <th>उम्र</th>
+            <th>लिंग</th>
+            <th>पद</th>
+            <th>जिला</th>
+            <th>प्रखंड</th>
+            <th>पंचायत</th>
+            <th>वर्ग</th>
+            <th>जाति</th>
+            <th>व्यवसाय</th>
+          </tr>
+        </thead>
+        <tbody id="appTableBody">
+          <!-- Populated via JS -->
+        </tbody>
+      </table>
+    </div>
+    <div id="emptyNotice" class="empty-state" style="display:none;">
+      कोई आवेदन नहीं मिला।
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script>
+    let allData = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadData();
+      setupFilters();
+    });
+
+    function loadData() {
+      try {
+        allData = JSON.parse(localStorage.getItem('jan_suraj_submissions') || '[]');
+      } catch (e) {
+        allData = [];
+      }
+      populateDistrictFilter();
+      updateStats();
+      renderTable();
+    }
+
+    function updateStats() {
+      document.getElementById('stat_total').textContent = allData.length;
+      document.getElementById('stat_zp').textContent = allData.filter(d => d.postApplied === 'जिला परिषद सदस्य').length;
+      document.getElementById('stat_mukhiya').textContent = allData.filter(d => d.postApplied === 'मुखिया').length;
+      document.getElementById('stat_ps').textContent = allData.filter(d => d.postApplied === 'पंचायत समिति सदस्य').length;
+    }
+
+    function populateDistrictFilter() {
+      const distSelect = document.getElementById('distFilter');
+      const dists = Array.from(new Set(allData.map(d => d.district).filter(Boolean))).sort();
+      distSelect.innerHTML = '<option value="">सभी जिले (All Districts)</option>';
+      dists.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d;
+        opt.textContent = d;
+        distSelect.appendChild(opt);
+      });
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('appTableBody');
+      const emptyNotice = document.getElementById('emptyNotice');
+      tbody.innerHTML = '';
+
+      const query = document.getElementById('searchFilter').value.trim().toLowerCase();
+      const dist = document.getElementById('distFilter').value;
+      const post = document.getElementById('postFilter').value;
+
+      const filtered = allData.filter(item => {
+        const matchQuery = !query || 
+          (item.fullName && item.fullName.toLowerCase().includes(query)) ||
+          (item.mobile && item.mobile.includes(query)) ||
+          (item.refId && item.refId.toLowerCase().includes(query));
+        const matchDist = !dist || item.district === dist;
+        const matchPost = !post || item.postApplied === post;
+        return matchQuery && matchDist && matchPost;
+      });
+
+      if (filtered.length === 0) {
+        emptyNotice.style.display = 'block';
+        return;
+      }
+      emptyNotice.style.display = 'none';
+
+      filtered.forEach((row, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${index + 1}</td>
+          <td><strong>${row.refId || '-'}</strong></td>
+          <td>${row.timestamp || '-'}</td>
+          <td>${row.fullName || '-'}</td>
+          <td><a href="tel:${row.mobile}" style="color:#0284c7; text-decoration:none;">${row.mobile || '-'}</a></td>
+          <td>${row.age || '-'}</td>
+          <td>${row.gender || '-'}</td>
+          <td><span class="tag tag-post">${row.postApplied || '-'}</span></td>
+          <td>${row.district || '-'}</td>
+          <td>${row.block || '-'}</td>
+          <td>${row.panchayat || '-'}</td>
+          <td>${row.category || '-'}</td>
+          <td>${row.caste || '-'}</td>
+          <td>${row.occupation || '-'}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function setupFilters() {
+      document.getElementById('searchFilter').addEventListener('input', renderTable);
+      document.getElementById('distFilter').addEventListener('change', renderTable);
+      document.getElementById('postFilter').addEventListener('change', renderTable);
+
+      // CSV Export
+      document.getElementById('btnExportCsv').addEventListener('click', () => {
+        if (allData.length === 0) {
+          alert('डाउनलोड करने के लिए कोई डेटा उपलब्ध नहीं है।');
+          return;
+        }
+
+        const headers = [
+          'Ref ID', 'Timestamp', 'आवेदक का पूरा नाम', 'मोबाइल नंबर', 'उम्र', 'लिंग',
+          'धर्म', 'जाति', 'वर्ग', 'पद', 'जिला परिषद क्षेत्र संख्या', 'पूर्व में चुनाव लड़े?',
+          'पूर्व का पद', 'शैक्षणिक योग्यता', 'व्यवसाय', 'अनुभव', 'उद्देश्य',
+          'जिला', 'विधानसभा', 'प्रखंड', 'पंचायत', 'वार्ड', 'राय'
+        ];
+
+        let csvContent = '\uFEFF' + headers.join(',') + '\n';
+        allData.forEach(d => {
+          const row = [
+            `"${d.refId || ''}"`,
+            `"${d.timestamp || ''}"`,
+            `"${d.fullName || ''}"`,
+            `"${d.mobile || ''}"`,
+            `"${d.age || ''}"`,
+            `"${d.gender || ''}"`,
+            `"${d.religion || ''}"`,
+            `"${d.caste || ''}"`,
+            `"${d.category || ''}"`,
+            `"${d.postApplied || ''}"`,
+            `"${d.zpKshetra || ''}"`,
+            `"${d.pastElection || ''}"`,
+            `"${d.pastPost || ''}"`,
+            `"${d.education || ''}"`,
+            `"${d.occupation || ''}"`,
+            `"${(d.experience || '').replace(/"/g, '""')}"`,
+            `"${(d.objective || '').replace(/"/g, '""')}"`,
+            `"${d.district || ''}"`,
+            `"${d.assembly || ''}"`,
+            `"${d.block || ''}"`,
+            `"${d.panchayat || ''}"`,
+            `"${d.ward || ''}"`,
+            `"${(d.feedback || '').replace(/"/g, '""')}"`
+          ];
+          csvContent += row.join(',') + '\n';
+        });
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.setAttribute('download', `Jan_Suraj_Panchayat_Applications_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+
+      // Clear Data
+      document.getElementById('btnClearData').addEventListener('click', () => {
+        if (confirm('क्या आप वाकई सभी लोकल डेटा रीसेट करना चाहते हैं?')) {
+          localStorage.removeItem('jan_suraj_submissions');
+          loadData();
+          alert('डेटा सफलतापूर्वक साफ़ कर दिया गया है।');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
