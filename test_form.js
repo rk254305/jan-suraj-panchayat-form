@@ -134,6 +134,7 @@ assert(html.includes('value="चेयरमैन / मुख्य पार�
 assert(!html.includes('विशेषकर महिला उम्मीदवारों हेतु'), 'Female candidate note has been successfully removed from education options');
 assert(html.includes('id="card_zpKshetra"') && !html.includes('id="card_zpKshetra">\n        <label class="question-label" for="zpKshetra">\n          9. जिला परिषद प्रादेशिक निर्वाचन क्षेत्र संख्या (1 से 75 तक) <span class="req-star">*</span>'), 'Zila Parishad Kshetra does not have mandatory asterisk');
 assert(html.includes('id="biodataFile"'), 'index.html contains Biodata file upload input');
+assert(html.includes('value="अल्पसंख्यक (Minority)"'), 'index.html contains Minority category in Hindi and English: अल्पसंख्यक (Minority)');
 assert(html.includes('assets/qrcode.min.js'), 'index.html includes local QR code library script');
 assert(html.includes('id="creativeModal"'), 'index.html contains creative campaign poster modal');
 
