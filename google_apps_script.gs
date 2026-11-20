@@ -48,7 +48,16 @@ function doPost(e) {
 }
 
 function doGet(e) {
-  return handleResponse(e);
+  // If GET has candidate data, record it; otherwise show status check (avoids blank rows on browser visit)
+  if (e && e.parameter && (e.parameter.fullName || e.parameter.mobile || e.parameter.refId)) {
+    return handleResponse(e);
+  }
+  return ContentService
+    .createTextOutput(JSON.stringify({ 
+      status: 'active', 
+      message: 'जन सुराज पंचायती राज 2027 Webhook चालू है। डेटा POST मेथड से सुरक्षित रूप से प्राप्त करने के लिए तैयार है।' 
+    }))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
 function handleResponse(e) {
@@ -75,10 +84,24 @@ function handleResponse(e) {
       try {
         data = JSON.parse(e.postData.contents);
       } catch (err) {
-        data = e.parameter || {};
+        try {
+          data = JSON.parse(decodeURIComponent(e.postData.contents));
+        } catch (e2) {
+          data = e.parameter || {};
+        }
       }
-    } else if (e && e.parameter) {
+    } else if (e && e.parameter && Object.keys(e.parameter).length > 0) {
       data = e.parameter;
+    }
+
+    // Guard: Do not write empty row if no name or mobile or refId is present
+    if (!data.fullName && !data.mobile && !data.district) {
+      return ContentService
+        .createTextOutput(JSON.stringify({ 
+          status: 'ignored', 
+          message: 'कोई डेटा प्राप्त नहीं हुआ (रिक्त आवेदन)।' 
+        }))
+        .setMimeType(ContentService.MimeType.JSON);
     }
 
     const timestamp = Utilities.formatDate(new Date(), "Asia/Kolkata", "dd/MM/yyyy HH:mm:ss");

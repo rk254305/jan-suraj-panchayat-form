@@ -460,16 +460,18 @@ function setupFormSubmission() {
 
     // 2. Transmit to Google Sheet
     const sheetUrl = localStorage.getItem('jan_suraj_sheet_url') || APP_CONFIG.GOOGLE_SHEET_WEBHOOK_URL;
-    if (sheetUrl && sheetUrl.startsWith('http')) {
+    let sheetSynced = false;
+    if (sheetUrl && sheetUrl.startsWith('http') && !sheetUrl.includes('SAMPLE_DEPLOYMENT_URL')) {
       try {
         await fetch(sheetUrl, {
           method: 'POST',
           mode: 'no-cors', // standard for Google Apps Script Webhook
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'text/plain;charset=utf-8'
           },
           body: JSON.stringify(submissionData)
         });
+        sheetSynced = true;
       } catch (err) {
         console.warn('Google Sheet submission fetch notice:', err);
       }
@@ -480,7 +482,7 @@ function setupFormSubmission() {
     spinner.style.display = 'none';
 
     // Show Success Modal
-    showSuccessModal(submissionData);
+    showSuccessModal(submissionData, sheetSynced, sheetUrl);
     resetFormState();
   });
 
@@ -512,12 +514,28 @@ function setupFormSubmission() {
   });
 
   // Success modal controls
-  function showSuccessModal(data) {
+  function showSuccessModal(data, sheetSynced, sheetUrl) {
     document.getElementById('modalRefId').textContent = data.refId;
     document.getElementById('sum_name').textContent = data.fullName;
     document.getElementById('sum_mobile').textContent = data.mobile;
     document.getElementById('sum_post').textContent = data.zpKshetra ? `${data.postApplied} (${data.zpKshetra})` : data.postApplied;
     document.getElementById('sum_location').textContent = `${data.district}, प्रखंड: ${data.block}, पं: ${data.panchayat}`;
+
+    // Sheet Sync Status indicator
+    const syncBadge = document.getElementById('syncStatusBadge');
+    if (syncBadge) {
+      if (sheetSynced) {
+        syncBadge.style.backgroundColor = '#ecfdf5';
+        syncBadge.style.color = '#065f46';
+        syncBadge.style.border = '1px solid #a7f3d0';
+        syncBadge.innerHTML = '🟢 <strong>Google Sheet:</strong> डेटा आपकी Google Sheet में सफलता पूर्वक भेजा गया!';
+      } else {
+        syncBadge.style.backgroundColor = '#fffbeb';
+        syncBadge.style.color = '#92400e';
+        syncBadge.style.border = '1px solid #fde68a';
+        syncBadge.innerHTML = '💾 <strong>लोकल बैकअप सुरक्षित:</strong> Google Sheet में सिंक करने हेतु ऊपर ⚙️ सेटिंग्स बटन में अपना Apps Script Web App URL डालें।';
+      }
+    }
 
     // WhatsApp Share Link
     const waText = encodeURIComponent(
