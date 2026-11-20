@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>एडमिन डैशबोर्ड | जन सुराज पंचायती राज आवेदन 2027</title>
+  <title>एडमिन डैशबोर्ड | जन सुराज पंचायती राज 2027</title>
   <link rel="icon" type="image/jpeg" href="assets/banner.jpg">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
@@ -15,6 +15,8 @@
       --border: #e2e8f0;
       --text: #0f172a;
       --text-muted: #64748b;
+      --danger: #dc2626;
+      --success: #16a34a;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -22,6 +24,87 @@
       background-color: var(--bg);
       color: var(--text);
       padding: 20px;
+      min-height: 100vh;
+    }
+
+    /* Login Screen Gate */
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 16px;
+    }
+    .login-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+      text-align: center;
+    }
+    .login-icon {
+      font-size: 44px;
+      margin-bottom: 12px;
+    }
+    .login-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 6px;
+    }
+    .login-sub {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .login-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 15px;
+      outline: none;
+      margin-bottom: 12px;
+      transition: all 0.2s;
+    }
+    .login-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(249, 184, 27, 0.25);
+    }
+    .login-btn {
+      width: 100%;
+      background: var(--primary);
+      color: #000000;
+      border: none;
+      padding: 13px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .login-btn:hover {
+      background: #e5a40e;
+    }
+    .login-error {
+      color: var(--danger);
+      font-size: 13px;
+      margin-bottom: 12px;
+      font-weight: 500;
+      display: none;
+    }
+
+    /* Dashboard Layout */
+    #dashboardView {
+      display: none;
+      max-width: 1400px;
+      margin: 0 auto;
     }
     .header {
       display: flex;
@@ -29,7 +112,7 @@
       align-items: center;
       margin-bottom: 24px;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 16px;
       padding-bottom: 16px;
       border-bottom: 1px solid var(--border);
     }
@@ -37,10 +120,14 @@
       font-size: 22px;
       font-weight: 700;
       color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .title-area p {
       font-size: 13.5px;
       color: var(--text-muted);
+      margin-top: 2px;
     }
     .btn-group {
       display: flex;
@@ -48,10 +135,10 @@
       flex-wrap: wrap;
     }
     .btn {
-      padding: 8px 16px;
+      padding: 9px 16px;
       border-radius: 8px;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 13.5px;
       cursor: pointer;
       border: 1px solid var(--border);
       background: white;
@@ -59,25 +146,37 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.2s;
+      transition: all 0.15s;
+    }
+    .btn:hover {
+      background: #f1f5f9;
     }
     .btn-primary {
       background: var(--primary);
       border-color: var(--primary);
-      color: black;
+      color: #000;
     }
     .btn-primary:hover {
       background: #e5a40e;
     }
+    .btn-danger {
+      color: var(--danger);
+      border-color: #fecaca;
+    }
+    .btn-danger:hover {
+      background: #fef2f2;
+    }
+
+    /* Stats Grid */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 16px;
       margin-bottom: 24px;
     }
     .stat-card {
       background: var(--card);
-      padding: 16px 20px;
+      padding: 18px 20px;
       border-radius: 12px;
       border: 1px solid var(--border);
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
@@ -88,11 +187,13 @@
       font-weight: 500;
     }
     .stat-val {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 800;
       color: var(--text);
       margin-top: 4px;
     }
+
+    /* Filters Card */
     .filter-card {
       background: var(--card);
       padding: 16px;
@@ -100,18 +201,23 @@
       border: 1px solid var(--border);
       margin-bottom: 20px;
       display: flex;
-      gap: 14px;
+      gap: 12px;
       flex-wrap: wrap;
     }
     .filter-input {
       flex: 1;
       min-width: 200px;
-      padding: 8px 12px;
+      padding: 10px 14px;
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 14px;
       outline: none;
     }
+    .filter-input:focus {
+      border-color: var(--primary);
+    }
+
+    /* Table */
     .table-card {
       background: var(--card);
       border-radius: 12px;
@@ -121,7 +227,7 @@
     }
     .table-wrap {
       overflow-x: auto;
-      max-height: 600px;
+      max-height: 650px;
     }
     table {
       width: 100%;
@@ -149,8 +255,8 @@
     }
     .tag {
       display: inline-block;
-      padding: 2px 8px;
-      border-radius: 12px;
+      padding: 3px 10px;
+      border-radius: 14px;
       font-size: 12px;
       font-weight: 600;
     }
@@ -160,102 +266,283 @@
     }
     .empty-state {
       text-align: center;
-      padding: 40px;
+      padding: 48px;
       color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      padding: 16px;
+    }
+    .modal-box {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 24px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .modal-box h3 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .modal-box p {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+      line-height: 1.5;
     }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <div class="title-area">
-      <h1>📊 जन सुराज प्रत्याशी आवेदन प्रबंधन (Admin Dashboard)</h1>
-      <p>मिशन पंचायती राज चुनाव - 2027 | प्राप्त आवेदनों की निगरानी व विश्लेषण</p>
-    </div>
-    <div class="btn-group">
-      <a href="index.html" class="btn">📝 मुख्य फॉर्म खोलें</a>
-      <button type="button" class="btn btn-primary" id="btnExportCsv">📥 CSV / Excel में डाउनलोड करें</button>
-      <button type="button" class="btn" id="btnClearData" style="color:#dc2626;">🗑️ डेटा रीसेट</button>
-    </div>
-  </div>
-
-  <!-- Stats Grid -->
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-label">कुल प्राप्त आवेदन</div>
-      <div class="stat-val" id="stat_total">0</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">जिला परिषद दावेदार</div>
-      <div class="stat-val" id="stat_zp">0</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">मुखिया दावेदार</div>
-      <div class="stat-val" id="stat_mukhiya">0</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">पंचायत समिति दावेदार</div>
-      <div class="stat-val" id="stat_ps">0</div>
+  <!-- 1. SECURE ADMIN LOGIN SCREEN (Default Visible) -->
+  <div class="login-overlay" id="loginScreen">
+    <div class="login-card">
+      <div class="login-icon">🔐</div>
+      <h2 class="login-title">जन सुराज एडमिन सुरक्षा</h2>
+      <p class="login-sub">यह डैशबोर्ड केवल अधिकृत एडमिन के लिए सुरक्षित है। कृपया अपना सुरक्षा पासवर्ड दर्ज करें।</p>
+      
+      <form id="loginForm">
+        <input type="password" id="passwordInput" class="login-input" placeholder="एडमिन पासवर्ड दर्ज करें" autocomplete="current-password" required autofocus>
+        <div class="login-error" id="loginErrorMsg">गलत पासवर्ड! कृपया सही पासवर्ड दर्ज करें।</div>
+        <button type="submit" class="login-btn">डैशबोर्ड में प्रवेश करें →</button>
+      </form>
     </div>
   </div>
 
-  <!-- Filters -->
-  <div class="filter-card">
-    <input type="text" id="searchFilter" class="filter-input" placeholder="🔍 नाम, मोबाइल या Ref ID से खोजें...">
-    <select id="distFilter" class="filter-input" style="flex:0.5; min-width:160px;">
-      <option value="">सभी जिले (All Districts)</option>
-    </select>
-    <select id="postFilter" class="filter-input" style="flex:0.5; min-width:160px;">
-      <option value="">सभी पद (All Posts)</option>
-      <option value="जिला परिषद सदस्य">जिला परिषद सदस्य</option>
-      <option value="पंचायत समिति सदस्य">पंचायत समिति सदस्य</option>
-      <option value="मुखिया">मुखिया</option>
-      <option value="सरपंच">सरपंच</option>
-      <option value="वार्ड सदस्य">वार्ड सदस्य</option>
-      <option value="पंच">पंच</option>
-    </select>
+  <!-- 2. SECURE ADMIN DASHBOARD VIEW (Hidden until Authenticated) -->
+  <div id="dashboardView">
+
+    <div class="header">
+      <div class="title-area">
+        <h1>📊 जन सुराज प्रत्याशी आवेदन प्रबंधन (Admin Dashboard)</h1>
+        <p>मिशन पंचायती राज चुनाव - 2027 | केवल अधिकृत एडमिन उपयोग हेतु</p>
+      </div>
+      <div class="btn-group">
+        <a href="index.html" class="btn" target="_blank">📝 मुख्य फॉर्म देखें ↗</a>
+        <button type="button" class="btn" id="btnOpenSheetSettings">⚙️ Sheet लिंक</button>
+        <button type="button" class="btn" id="btnChangePassword">🔑 पासवर्ड बदलें</button>
+        <button type="button" class="btn btn-primary" id="btnExportCsv">📥 CSV डाउनलोड</button>
+        <button type="button" class="btn btn-danger" id="btnClearData">🗑️ डेटा रीसेट</button>
+        <button type="button" class="btn" id="btnLogout" style="font-weight:bold; color:#b91c1c;">🚪 लॉगआउट</button>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">कुल प्राप्त आवेदन</div>
+        <div class="stat-val" id="stat_total">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">जिला परिषद दावेदार</div>
+        <div class="stat-val" id="stat_zp">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">मुखिया दावेदार</div>
+        <div class="stat-val" id="stat_mukhiya">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">पंचायत समिति दावेदार</div>
+        <div class="stat-val" id="stat_ps">0</div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-card">
+      <input type="text" id="searchFilter" class="filter-input" placeholder="🔍 नाम, मोबाइल, Ref ID या पंचायत से खोजें...">
+      <select id="distFilter" class="filter-input" style="flex:0.5; min-width:160px;">
+        <option value="">सभी जिले (All Districts)</option>
+      </select>
+      <select id="postFilter" class="filter-input" style="flex:0.5; min-width:160px;">
+        <option value="">सभी पद (All Posts)</option>
+        <option value="जिला परिषद सदस्य">जिला परिषद सदस्य</option>
+        <option value="पंचायत समिति सदस्य">पंचायत समिति सदस्य</option>
+        <option value="मुखिया">मुखिया</option>
+        <option value="सरपंच">सरपंच</option>
+        <option value="वार्ड सदस्य">वार्ड सदस्य</option>
+        <option value="पंच">पंच</option>
+      </select>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Ref ID</th>
+              <th>दिनांक व समय</th>
+              <th>आवेदक का नाम</th>
+              <th>मोबाइल नंबर</th>
+              <th>उम्र</th>
+              <th>लिंग</th>
+              <th>पद</th>
+              <th>जिला</th>
+              <th>विधानसभा</th>
+              <th>प्रखंड</th>
+              <th>पंचायत</th>
+              <th>वार्ड</th>
+              <th>वर्ग</th>
+              <th>जाति</th>
+              <th>व्यवसाय</th>
+            </tr>
+          </thead>
+          <tbody id="appTableBody">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+      <div id="emptyNotice" class="empty-state" style="display:none;">
+        कोई आवेदन नहीं मिला।
+      </div>
+    </div>
+
   </div>
 
-  <!-- Table -->
-  <div class="table-card">
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Ref ID</th>
-            <th>दिनांक व समय</th>
-            <th>आवेदक का नाम</th>
-            <th>मोबाइल नंबर</th>
-            <th>उम्र</th>
-            <th>लिंग</th>
-            <th>पद</th>
-            <th>जिला</th>
-            <th>प्रखंड</th>
-            <th>पंचायत</th>
-            <th>वर्ग</th>
-            <th>जाति</th>
-            <th>व्यवसाय</th>
-          </tr>
-        </thead>
-        <tbody id="appTableBody">
-          <!-- Populated via JS -->
-        </tbody>
-      </table>
+  <!-- Modal: Google Sheet Settings -->
+  <div class="modal-overlay" id="sheetSettingsModal">
+    <div class="modal-box">
+      <h3>⚙️ Google Sheets Sync Webhook URL</h3>
+      <p>अपने Google Sheet का Apps Script Web App URL यहाँ दर्ज करें ताकि हर आवेदन सीधे आपकी Google Sheet में स्वतः दर्ज हो सके।</p>
+      
+      <div style="margin-bottom:14px;">
+        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">Google Apps Script Web App URL:</label>
+        <input type="url" id="adminSheetUrlInput" class="filter-input" style="width:100%;" placeholder="https://script.google.com/macros/s/.../exec">
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:8px;">
+        <button type="button" class="btn" id="btnCloseSheetModal">रद्द करें</button>
+        <button type="button" class="btn btn-primary" id="btnSaveSheetModal">सेव करें</button>
+      </div>
     </div>
-    <div id="emptyNotice" class="empty-state" style="display:none;">
-      कोई आवेदन नहीं मिला।
+  </div>
+
+  <!-- Modal: Change Password -->
+  <div class="modal-overlay" id="pwdModal">
+    <div class="modal-box">
+      <h3>🔑 एडमिन पासवर्ड बदलें</h3>
+      <p>नया सुरक्षा पासवर्ड दर्ज करें। भविष्य में एडमिन पैनल खोलने के लिए इसी पासवर्ड की आवश्यकता होगी।</p>
+      
+      <div style="margin-bottom:14px;">
+        <label style="display:block; font-size:13px; font-weight:600; margin-bottom:6px;">नया पासवर्ड:</label>
+        <input type="password" id="newAdminPwd" class="filter-input" style="width:100%;" placeholder="नया पासवर्ड दर्ज करें">
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:8px;">
+        <button type="button" class="btn" id="btnClosePwdModal">रद्द करें</button>
+        <button type="button" class="btn btn-primary" id="btnSavePwdModal">पासवर्ड अपडेट करें</button>
+      </div>
     </div>
   </div>
 
   <script src="config.js"></script>
   <script>
-    let allData = [];
+    // Security & Auth Management
+    const DEFAULT_MASTER_PWD = 'JanSuraj@2027';
+    const AUTH_SESSION_KEY = 'jan_suraj_admin_authenticated';
+    const CUSTOM_PWD_KEY = 'jan_suraj_admin_custom_pwd';
 
-    document.addEventListener('DOMContentLoaded', () => {
+    function getExpectedPassword() {
+      return localStorage.getItem(CUSTOM_PWD_KEY) || DEFAULT_MASTER_PWD;
+    }
+
+    const loginScreen = document.getElementById('loginScreen');
+    const dashboardView = document.getElementById('dashboardView');
+    const loginForm = document.getElementById('loginForm');
+    const passwordInput = document.getElementById('passwordInput');
+    const loginErrorMsg = document.getElementById('loginErrorMsg');
+
+    // Check if session already authenticated
+    if (sessionStorage.getItem(AUTH_SESSION_KEY) === 'true') {
+      unlockDashboard();
+    }
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const entered = passwordInput.value.trim();
+      const expected = getExpectedPassword();
+
+      if (entered === expected) {
+        sessionStorage.setItem(AUTH_SESSION_KEY, 'true');
+        unlockDashboard();
+      } else {
+        loginErrorMsg.style.display = 'block';
+        passwordInput.style.borderColor = 'var(--danger)';
+        passwordInput.value = '';
+        passwordInput.focus();
+      }
+    });
+
+    function unlockDashboard() {
+      loginScreen.style.display = 'none';
+      dashboardView.style.display = 'block';
       loadData();
       setupFilters();
+    }
+
+    // Logout
+    document.getElementById('btnLogout').addEventListener('click', () => {
+      sessionStorage.removeItem(AUTH_SESSION_KEY);
+      window.location.reload();
     });
+
+    // Change Password Modal
+    const pwdModal = document.getElementById('pwdModal');
+    document.getElementById('btnChangePassword').addEventListener('click', () => {
+      pwdModal.style.display = 'flex';
+      document.getElementById('newAdminPwd').value = '';
+    });
+    document.getElementById('btnClosePwdModal').addEventListener('click', () => {
+      pwdModal.style.display = 'none';
+    });
+    document.getElementById('btnSavePwdModal').addEventListener('click', () => {
+      const newPwd = document.getElementById('newAdminPwd').value.trim();
+      if (!newPwd || newPwd.length < 6) {
+        alert('पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।');
+        return;
+      }
+      localStorage.setItem(CUSTOM_PWD_KEY, newPwd);
+      alert('एडमिन पासवर्ड सफलतापूर्वक अपडेट कर दिया गया है!');
+      pwdModal.style.display = 'none';
+    });
+
+    // Sheet Settings Modal
+    const sheetModal = document.getElementById('sheetSettingsModal');
+    const sheetInput = document.getElementById('adminSheetUrlInput');
+    document.getElementById('btnOpenSheetSettings').addEventListener('click', () => {
+      sheetInput.value = localStorage.getItem('jan_suraj_sheet_url') || (typeof APP_CONFIG !== 'undefined' ? APP_CONFIG.GOOGLE_SHEET_WEBHOOK_URL : '') || '';
+      sheetModal.style.display = 'flex';
+    });
+    document.getElementById('btnCloseSheetModal').addEventListener('click', () => {
+      sheetModal.style.display = 'none';
+    });
+    document.getElementById('btnSaveSheetModal').addEventListener('click', () => {
+      const url = sheetInput.value.trim();
+      if (url) {
+        localStorage.setItem('jan_suraj_sheet_url', url);
+        alert('Google Sheet Webhook URL सुरक्षित कर लिया गया है!');
+      } else {
+        localStorage.removeItem('jan_suraj_sheet_url');
+        alert('Google Sheet Webhook URL हटा दिया गया है।');
+      }
+      sheetModal.style.display = 'none';
+    });
+
+    // Data Loading & Dashboard Operations
+    let allData = [];
 
     function loadData() {
       try {
@@ -300,7 +587,8 @@
         const matchQuery = !query || 
           (item.fullName && item.fullName.toLowerCase().includes(query)) ||
           (item.mobile && item.mobile.includes(query)) ||
-          (item.refId && item.refId.toLowerCase().includes(query));
+          (item.refId && item.refId.toLowerCase().includes(query)) ||
+          (item.panchayat && item.panchayat.toLowerCase().includes(query));
         const matchDist = !dist || item.district === dist;
         const matchPost = !post || item.postApplied === post;
         return matchQuery && matchDist && matchPost;
@@ -324,8 +612,10 @@
           <td>${row.gender || '-'}</td>
           <td><span class="tag tag-post">${row.postApplied || '-'}</span></td>
           <td>${row.district || '-'}</td>
+          <td>${row.assembly || '-'}</td>
           <td>${row.block || '-'}</td>
           <td>${row.panchayat || '-'}</td>
+          <td>${row.ward || '-'}</td>
           <td>${row.category || '-'}</td>
           <td>${row.caste || '-'}</td>
           <td>${row.occupation || '-'}</td>
@@ -340,7 +630,7 @@
       document.getElementById('postFilter').addEventListener('change', renderTable);
 
       // CSV Export
-      document.getElementById('btnExportCsv').addEventListener('click', () => {
+      document.getElementById('btnExportCsv').onclick = () => {
         if (allData.length === 0) {
           alert('डाउनलोड करने के लिए कोई डेटा उपलब्ध नहीं है।');
           return;
@@ -390,16 +680,16 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-      });
+      };
 
       // Clear Data
-      document.getElementById('btnClearData').addEventListener('click', () => {
+      document.getElementById('btnClearData').onclick = () => {
         if (confirm('क्या आप वाकई सभी लोकल डेटा रीसेट करना चाहते हैं?')) {
           localStorage.removeItem('jan_suraj_submissions');
           loadData();
           alert('डेटा सफलतापूर्वक साफ़ कर दिया गया है।');
         }
-      });
+      };
     }
   </script>
 </body>

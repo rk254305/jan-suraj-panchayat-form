@@ -564,4 +564,24 @@ function setupFormSubmission() {
   successModal.addEventListener('click', (e) => {
     if (e.target === successModal) successModal.style.display = 'none';
   });
+
+  // Secret Admin Access for Owner (Ctrl+Shift+A or 3 clicks on footer logo)
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+      e.preventDefault();
+      window.location.href = 'admin.html';
+    }
+  });
+
+  let logoClicks = 0;
+  const footerLogo = document.querySelector('.footer-logo');
+  if (footerLogo) {
+    footerLogo.addEventListener('click', () => {
+      logoClicks++;
+      if (logoClicks >= 3) {
+        window.location.href = 'admin.html';
+      }
+      setTimeout(() => { logoClicks = 0; }, 2000);
+    });
+  }
 }
