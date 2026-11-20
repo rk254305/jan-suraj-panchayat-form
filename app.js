@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupDistrictBlockCascade();
   setupSettingsModal();
   setupQrCreativeModal();
+  setupSecretAdminEntry();
   setupFormSubmission();
 });
 
@@ -502,7 +503,34 @@ function setupQrCreativeModal() {
   }
 }
 
-// 10. Form Submission & Validation
+// 10. Secret Admin Portal Entry (3 Clicks on Footer Logo or Ctrl+Shift+A)
+function setupSecretAdminEntry() {
+  const trigger = document.getElementById('secretAdminTrigger');
+  let clickCount = 0;
+  let clickTimer = null;
+
+  trigger?.addEventListener('click', () => {
+    clickCount++;
+    clearTimeout(clickTimer);
+    if (clickCount >= 3) {
+      clickCount = 0;
+      window.location.href = 'admin.html';
+    } else {
+      clickTimer = setTimeout(() => {
+        clickCount = 0;
+      }, 1500);
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+      e.preventDefault();
+      window.location.href = 'admin.html';
+    }
+  });
+}
+
+// 11. Form Submission & Validation
 function setupFormSubmission() {
   const form = document.getElementById('panchayatForm');
   const btnSubmit = document.getElementById('btnSubmit');

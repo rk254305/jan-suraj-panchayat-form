@@ -21,17 +21,11 @@
 
   <div class="container">
 
-    <!-- Top Action Bar -->
+    <!-- Top Action Bar (Public: Only Campaign Flyer & QR Code) -->
     <div class="top-bar">
       <button type="button" class="icon-btn creative-pill" id="btnOpenCreative">
         <span>🎨</span> प्रचार पोस्टर व QR कोड
       </button>
-      <button type="button" class="icon-btn" id="btnOpenSettings">
-        <span>⚙️</span> शीट लिंक
-      </button>
-      <a href="admin.html" target="_blank" class="icon-btn" style="color:#0369a1; border-color:#bae6fd;">
-        <span>📊</span> एडमिन पैनल ↗
-      </a>
     </div>
 
     <!-- Main Header Card -->
@@ -531,7 +525,7 @@
 
     <!-- Footer -->
     <footer class="form-footer">
-      <p class="footer-logo">जन सुराज अभियान</p>
+      <p class="footer-logo" id="secretAdminTrigger" title="जन सुराज अभियान" style="cursor:default; user-select:none;">जन सुराज अभियान</p>
       <p>सही लोग • सही सोच • सामूहिक प्रयास</p>
       <p style="margin-top:6px; font-size:11.5px; opacity:0.8;">मिशन पंचायती राज चुनाव - 2027 | बिहार</p>
     </footer>
@@ -652,40 +646,6 @@
         </button>
       </div>
 
-    </div>
-  </div>
-
-  <!-- Settings Modal (Google Sheets Connection) -->
-  <div class="modal-overlay" id="settingsModal">
-    <div class="modal-card">
-      <h2 class="modal-title" style="text-align:left;">⚙️ Google Sheet कनेक्शन सेटिंग्स</h2>
-      <p class="modal-subtitle" style="text-align:left; font-size:13.5px; margin-bottom:16px;">
-        अपने Google Sheet का Apps Script Web App URL यहाँ पेस्ट करें ताकि हर आवेदन सीधे आपकी Google Sheet में स्वतः सेव
-        हो सके।
-      </p>
-
-      <div style="margin-bottom:16px;">
-        <label for="inputWebhookUrl" style="display:block; font-size:13.5px; font-weight:600; margin-bottom:6px;">
-          Google Apps Script Web App URL:
-        </label>
-        <input type="url" id="inputWebhookUrl" class="input-text"
-          placeholder="https://script.google.com/macros/s/.../exec">
-        <div style="font-size:12px; color:var(--text-muted); margin-top:4px;">
-          (गूगल शीट > Extensions > Apps Script > Deploy > Web App से प्राप्त URL)
-        </div>
-      </div>
-
-      <div
-        style="background:#f9fafb; padding:12px; border-radius:8px; font-size:12.5px; line-height:1.5; margin-bottom:18px;">
-        💡 <strong>नोट:</strong> यदि कोई URL सेट नहीं है, तो आवेदन ब्राउज़र के <strong>Local Storage</strong> में
-        सुरक्षित रहते हैं और एडमिन पैनल से एक्सेल/CSV में डाउनलोड किए जा सकते हैं।
-      </div>
-
-      <div style="display:flex; justify-content:flex-end; gap:10px;">
-        <button type="button" id="btnCancelSettings" class="btn-secondary" style="padding:8px 16px;">रद्द करें</button>
-        <button type="button" id="btnSaveSettings" class="btn-submit"
-          style="min-width:auto; padding:8px 20px; font-size:14px;">सेव करें</button>
-      </div>
     </div>
   </div>
 

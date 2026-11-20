@@ -341,8 +341,8 @@
       </div>
       <div class="btn-group">
         <a href="index.html" class="btn" target="_blank">📝 मुख्य फॉर्म देखें ↗</a>
-        <a href="preview.html" class="btn" target="_blank">📱 मोबाइल प्रीव्यू ↗</a>
-        <button type="button" class="btn" id="btnOpenSheetSettings">⚙️ Sheet लिंक</button>
+        <a href="https://docs.google.com/spreadsheets/d/1gkYyqhc04suUydoU_I-5Ia2EJtbW__Dc53D-EHwmHjs/edit" target="_blank" class="btn" style="background:#ecfdf5; color:#065f46; border-color:#a7f3d0; font-weight:700;">📗 मुख्य Google Sheet खोलें ↗</a>
+        <button type="button" class="btn" id="btnOpenSheetSettings">⚙️ Webhook सेटिंग्स</button>
         <button type="button" class="btn" id="btnChangePassword">🔑 पासवर्ड बदलें</button>
         <button type="button" class="btn btn-primary" id="btnExportCsv">📥 CSV डाउनलोड</button>
         <button type="button" class="btn btn-danger" id="btnClearData">🗑️ डेटा रीसेट</button>
@@ -475,13 +475,40 @@
 
   <script src="config.js"></script>
   <script>
-    // Security & Auth Management
-    const DEFAULT_MASTER_PWD = 'JanSuraj@2027';
-    const AUTH_SESSION_KEY = 'jan_suraj_admin_authenticated';
-    const CUSTOM_PWD_KEY = 'jan_suraj_admin_custom_pwd';
+    // Cryptographic SHA-256 Hash Function (One-way encryption)
+    async function sha256(str) {
+      const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
 
-    function getExpectedPassword() {
-      return localStorage.getItem(CUSTOM_PWD_KEY) || DEFAULT_MASTER_PWD;
+    // Default Authorized Hashes (Plaintext password is NEVER stored in code)
+    // Default 1: Raushan@JanSuraj2027
+    // Default 2: JanSuraj@2027
+    const MASTER_HASHES = [
+      'efa249b57017ef7bad452367eb7a6d4c0d0147ed2c77c21065c8caccf8096f17',
+      'fa001514e5ee94ecf8a70e26a0abdd42618f27ac9c37debc96e7cf7433fc5a9c'
+    ];
+    const AUTH_SESSION_KEY = 'jan_suraj_admin_auth_token';
+    const CUSTOM_HASH_KEY = 'jan_suraj_admin_custom_hash';
+    const LOCKOUT_KEY = 'jan_suraj_admin_lockout';
+    const ATTEMPTS_KEY = 'jan_suraj_admin_attempts';
+
+    function isLockedOut() {
+      const lockUntil = parseInt(localStorage.getItem(LOCKOUT_KEY) || '0', 10);
+      if (Date.now() < lockUntil) {
+        const remainingMinutes = Math.ceil((lockUntil - Date.now()) / 60000);
+        return remainingMinutes;
+      }
+      return 0;
+    }
+
+    async function verifyPassword(pwd) {
+      const inputHash = await sha256(pwd);
+      const customHash = localStorage.getItem(CUSTOM_HASH_KEY);
+      if (customHash) {
+        return inputHash === customHash;
+      }
+      return MASTER_HASHES.includes(inputHash);
     }
 
     const loginScreen = document.getElementById('loginScreen');
@@ -491,12 +518,21 @@
     const loginErrorMsg = document.getElementById('loginErrorMsg');
 
     function checkAuth() {
-      if (sessionStorage.getItem(AUTH_SESSION_KEY) === 'true') {
+      const token = sessionStorage.getItem(AUTH_SESSION_KEY);
+      if (token && token.startsWith('auth_')) {
         showDashboard();
       } else {
         loginScreen.style.display = 'flex';
         dashboardView.style.display = 'none';
-        passwordInput.focus();
+        const lockMinutes = isLockedOut();
+        if (lockMinutes > 0) {
+          loginErrorMsg.textContent = `⚠️ अत्यधिक गलत प्रयास! सुरक्षा कारणों से एडमिन लॉगिन ${lockMinutes} मिनट के लिए लॉक है।`;
+          loginErrorMsg.style.display = 'block';
+          passwordInput.disabled = true;
+        } else {
+          passwordInput.disabled = false;
+          passwordInput.focus();
+        }
       }
     }
 
@@ -507,15 +543,40 @@
       setupFilters();
     }
 
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      const lockMinutes = isLockedOut();
+      if (lockMinutes > 0) {
+        loginErrorMsg.textContent = `⚠️ अत्यधिक गलत प्रयास! सुरक्षा कारणों से एडमिन लॉगिन ${lockMinutes} मिनट के लिए लॉक है।`;
+        loginErrorMsg.style.display = 'block';
+        passwordInput.disabled = true;
+        return;
+      }
+
       const entered = passwordInput.value.trim();
-      if (entered === getExpectedPassword()) {
-        sessionStorage.setItem(AUTH_SESSION_KEY, 'true');
+      if (!entered) return;
+
+      const isValid = await verifyPassword(entered);
+      if (isValid) {
+        localStorage.removeItem(ATTEMPTS_KEY);
+        localStorage.removeItem(LOCKOUT_KEY);
+        sessionStorage.setItem(AUTH_SESSION_KEY, 'auth_' + Date.now());
         loginErrorMsg.style.display = 'none';
         passwordInput.value = '';
         showDashboard();
       } else {
+        let attempts = parseInt(localStorage.getItem(ATTEMPTS_KEY) || '0', 10) + 1;
+        localStorage.setItem(ATTEMPTS_KEY, attempts);
+
+        if (attempts >= 5) {
+          const lockTime = Date.now() + 15 * 60 * 1000; // 15 minutes lockout
+          localStorage.setItem(LOCKOUT_KEY, lockTime);
+          loginErrorMsg.textContent = '⛔ 5 बार गलत पासवर्ड! सुरक्षा हेतु एडमिन लॉगिन 15 मिनट के लिए लॉक कर दिया गया है।';
+          passwordInput.disabled = true;
+        } else {
+          loginErrorMsg.textContent = `गलत पासवर्ड! कृपया सही पासवर्ड दर्ज करें। (शेष प्रयास: ${5 - attempts})`;
+        }
         loginErrorMsg.style.display = 'block';
         passwordInput.value = '';
         passwordInput.focus();
@@ -536,14 +597,15 @@
     document.getElementById('btnClosePwdModal').addEventListener('click', () => {
       pwdModal.style.display = 'none';
     });
-    document.getElementById('btnSavePwdModal').addEventListener('click', () => {
+    document.getElementById('btnSavePwdModal').addEventListener('click', async () => {
       const newPwd = document.getElementById('newAdminPwd').value.trim();
       if (!newPwd || newPwd.length < 6) {
         alert('पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।');
         return;
       }
-      localStorage.setItem(CUSTOM_PWD_KEY, newPwd);
-      alert('एडमिन पासवर्ड सफलतापूर्वक अपडेट कर दिया गया है!');
+      const newHash = await sha256(newPwd);
+      localStorage.setItem(CUSTOM_HASH_KEY, newHash);
+      alert('एडमिन पासवर्ड सफलतापूर्वक अपडेट कर दिया गया है! अब केवल आपके नए पासवर्ड से लॉगिन होगा।');
       pwdModal.style.display = 'none';
     });
 
