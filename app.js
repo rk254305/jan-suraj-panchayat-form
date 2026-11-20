@@ -44,16 +44,6 @@ function initFormElements() {
       distSelect.appendChild(opt);
     });
   }
-
-  // Populate Assembly Constituencies from BIHAR_ASSEMBLY_CONSTITUENCIES
-  const assemblyDatalist = document.getElementById('assemblyList');
-  if (assemblyDatalist && typeof BIHAR_ASSEMBLY_CONSTITUENCIES !== 'undefined') {
-    BIHAR_ASSEMBLY_CONSTITUENCIES.forEach(ac => {
-      const opt = document.createElement('option');
-      opt.value = ac;
-      assemblyDatalist.appendChild(opt);
-    });
-  }
 }
 
 // 2. Radio Button Visual Selection
@@ -132,33 +122,66 @@ function setupConditionalLogic() {
   });
 }
 
-// 4. District -> Block Cascading Dropdowns
+// 4. District -> Assembly & Block Cascading Dropdowns
 function setupDistrictBlockCascade() {
   const distSelect = document.getElementById('district');
+  const assemblySelect = document.getElementById('assembly');
   const blockSelect = document.getElementById('block');
+  const panchayatInput = document.getElementById('panchayat');
 
-  if (!distSelect || !blockSelect) return;
+  if (!distSelect || !assemblySelect || !blockSelect) return;
 
   distSelect.addEventListener('change', () => {
     const selectedDist = distSelect.value;
+    
+    // Clear and reset assembly dropdown
+    assemblySelect.innerHTML = '';
+    // Clear and reset block dropdown
     blockSelect.innerHTML = '';
 
-    if (!selectedDist || typeof BIHAR_GEO_DATA === 'undefined' || !BIHAR_GEO_DATA[selectedDist]) {
+    if (!selectedDist) {
+      assemblySelect.disabled = true;
+      const optA = document.createElement('option');
+      optA.value = '';
+      optA.textContent = '-- पहले जिला चुनें --';
+      assemblySelect.appendChild(optA);
+
       blockSelect.disabled = true;
-      const defaultOpt = document.createElement('option');
-      defaultOpt.value = '';
-      defaultOpt.textContent = '-- पहले जिला चुनें --';
-      blockSelect.appendChild(defaultOpt);
+      const optB = document.createElement('option');
+      optB.value = '';
+      optB.textContent = '-- पहले जिला चुनें --';
+      blockSelect.appendChild(optB);
+
+      document.getElementById('wrap_district')?.classList.add('has-error');
       return;
     }
 
-    blockSelect.disabled = false;
-    const defaultOpt = document.createElement('option');
-    defaultOpt.value = '';
-    defaultOpt.textContent = `-- ${selectedDist} के प्रखंड चुनें --`;
-    blockSelect.appendChild(defaultOpt);
+    // District selected: clear district error
+    document.getElementById('wrap_district')?.classList.remove('has-error');
 
-    const blocks = BIHAR_GEO_DATA[selectedDist];
+    // 1. Populate Assembly Constituencies strictly for this district
+    const assemblies = (typeof BIHAR_DISTRICT_ASSEMBLIES !== 'undefined' && BIHAR_DISTRICT_ASSEMBLIES[selectedDist]) || [];
+    assemblySelect.disabled = false;
+    const defaultOptA = document.createElement('option');
+    defaultOptA.value = '';
+    defaultOptA.textContent = `-- ${selectedDist} की विधानसभा चुनें (${assemblies.length}) --`;
+    assemblySelect.appendChild(defaultOptA);
+
+    assemblies.forEach(ac => {
+      const opt = document.createElement('option');
+      opt.value = ac;
+      opt.textContent = ac;
+      assemblySelect.appendChild(opt);
+    });
+
+    // 2. Populate Blocks strictly for this district
+    const blocks = (typeof BIHAR_GEO_DATA !== 'undefined' && BIHAR_GEO_DATA[selectedDist]) || [];
+    blockSelect.disabled = false;
+    const defaultOptB = document.createElement('option');
+    defaultOptB.value = '';
+    defaultOptB.textContent = `-- ${selectedDist} के प्रखंड चुनें (${blocks.length}) --`;
+    blockSelect.appendChild(defaultOptB);
+
     blocks.forEach(blk => {
       const opt = document.createElement('option');
       opt.value = blk;
@@ -166,12 +189,40 @@ function setupDistrictBlockCascade() {
       blockSelect.appendChild(opt);
     });
 
-    distSelect.closest('.card')?.classList.remove('has-error');
+    checkLocationCardError();
+  });
+
+  assemblySelect.addEventListener('change', () => {
+    if (assemblySelect.value) {
+      document.getElementById('wrap_assembly')?.classList.remove('has-error');
+      checkLocationCardError();
+    }
   });
 
   blockSelect.addEventListener('change', () => {
-    blockSelect.closest('.card')?.classList.remove('has-error');
+    if (blockSelect.value) {
+      document.getElementById('wrap_block')?.classList.remove('has-error');
+      checkLocationCardError();
+    }
   });
+
+  if (panchayatInput) {
+    panchayatInput.addEventListener('input', () => {
+      if (panchayatInput.value.trim()) {
+        document.getElementById('wrap_panchayat')?.classList.remove('has-error');
+        checkLocationCardError();
+      }
+    });
+  }
+
+  function checkLocationCardError() {
+    const cardLoc = document.getElementById('card_location');
+    if (!cardLoc) return;
+    const hasAnySubError = cardLoc.querySelectorAll('.sub-field.has-error').length > 0;
+    if (!hasAnySubError) {
+      cardLoc.classList.remove('has-error');
+    }
+  }
 }
 
 // 5. Settings Modal (Google Sheets Connection)
@@ -313,13 +364,44 @@ function setupFormSubmission() {
 
     // 16. Location
     const district = document.getElementById('district').value;
-    const assembly = document.getElementById('assembly').value.trim();
+    const assembly = document.getElementById('assembly').value;
     const block = document.getElementById('block').value;
     const panchayat = document.getElementById('panchayat').value.trim();
     const ward = document.getElementById('ward').value.trim();
 
-    if (!district || !assembly || !block || !panchayat) {
+    let locError = false;
+    if (!district) {
+      document.getElementById('wrap_district')?.classList.add('has-error');
+      locError = true;
+    } else {
+      document.getElementById('wrap_district')?.classList.remove('has-error');
+    }
+
+    if (!assembly) {
+      document.getElementById('wrap_assembly')?.classList.add('has-error');
+      locError = true;
+    } else {
+      document.getElementById('wrap_assembly')?.classList.remove('has-error');
+    }
+
+    if (!block) {
+      document.getElementById('wrap_block')?.classList.add('has-error');
+      locError = true;
+    } else {
+      document.getElementById('wrap_block')?.classList.remove('has-error');
+    }
+
+    if (!panchayat) {
+      document.getElementById('wrap_panchayat')?.classList.add('has-error');
+      locError = true;
+    } else {
+      document.getElementById('wrap_panchayat')?.classList.remove('has-error');
+    }
+
+    if (locError) {
       flagError('card_location');
+    } else {
+      document.getElementById('card_location')?.classList.remove('has-error');
     }
 
     // Feedback
@@ -399,11 +481,34 @@ function setupFormSubmission() {
 
     // Show Success Modal
     showSuccessModal(submissionData);
+    resetFormState();
+  });
+
+  const resetFormState = () => {
     form.reset();
     document.querySelectorAll('.radio-option.selected').forEach(el => el.classList.remove('selected'));
-    document.getElementById('card_zpKshetra').classList.remove('active');
-    document.getElementById('card_pastPost').classList.remove('active');
-    document.getElementById('block').disabled = true;
+    document.getElementById('card_zpKshetra')?.classList.remove('active');
+    document.getElementById('card_pastPost')?.classList.remove('active');
+    
+    // Reset Assembly & Block selects
+    const assemblySelect = document.getElementById('assembly');
+    if (assemblySelect) {
+      assemblySelect.innerHTML = '<option value="">-- पहले जिला चुनें --</option>';
+      assemblySelect.disabled = true;
+    }
+    const blockSelect = document.getElementById('block');
+    if (blockSelect) {
+      blockSelect.innerHTML = '<option value="">-- पहले जिला चुनें --</option>';
+      blockSelect.disabled = true;
+    }
+
+    // Clear all error states
+    document.querySelectorAll('.card.has-error').forEach(c => c.classList.remove('has-error'));
+    document.querySelectorAll('.sub-field.has-error').forEach(sf => sf.classList.remove('has-error'));
+  };
+
+  form.addEventListener('reset', () => {
+    setTimeout(resetFormState, 10);
   });
 
   // Success modal controls

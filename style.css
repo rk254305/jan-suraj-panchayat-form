@@ -277,8 +277,31 @@ body {
   font-weight: 500;
 }
 
-.has-error .error-msg {
+.card.has-error > .error-msg {
   display: block;
+}
+
+/* Sub-field Error Handling (for multi-input cards such as Section 16) */
+.sub-field .error-msg {
+  display: none;
+}
+
+.sub-field.has-error .error-msg {
+  display: block !important;
+}
+
+.sub-field.has-error .select-input,
+.sub-field.has-error .input-text {
+  border-color: var(--error-color) !important;
+  background-color: #fffbfa !important;
+}
+
+/* Direct input error styling for single-question cards */
+.card.has-error > .input-text,
+.card.has-error > .select-input,
+.card.has-error > .textarea-input {
+  border-color: var(--error-color) !important;
+  background-color: #fffbfa;
 }
 
 /* Form Actions */
